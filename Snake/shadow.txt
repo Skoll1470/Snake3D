@@ -1,0 +1,41 @@
+soft shadow (in real time)
+
+
+- definitions
+nécessite : source de lumières, objet qui obstrue la lumière et des objets reçeveur.
+
+3 types :
+autoombrage
+ombre porté
+ombre projeté (d'un obturateur sur un autre objet de la scène
+
+intérêt visualisé la position, ce qu'ils tient, le distingué. aide aussi a la compréhension de la géométrie du décors sur lequel l'ombre est porté
+apporte plus de réalisme 
+
+- hard vs softshadow
+softshadow sont plus réaliste et augmente donc le réalisme par rapport au hard shadow
+
+hard = peu de réalisme, très binaire, permet de visualisé
+soft = permet l'entre deux donc la pénombre qui sert à modéliser de manière plus réaliste. la majorité des algorithmes servent à calculer ces soft shadow
+
+umbra + penumbra = ta daronne (shadow)
+
+problématique ?
+plus zone de lumière étendu plus il y aura d'incohérence physique dans l'ombrage
+(prendre la totalité de la zone de lumière, mais plus lent, ou prendre des petites zone de lumière pour calculer par partie)
+
+cumuler les différentes ombre, possible avec hardshadow (moins faisable avec les soft shadow, les zones de pénombre disparaisse)
+
+algorithmes d'approche basée image : shadow map
+première algo : tu segmente ton array pour avoir que des points et tu cible hardshadow pour créer une cartes d'atténuation d'ombre ?
+méthode brute force, gourmande en terme de ressources. rendu nombre d'échantillons * nombre d'objet recevant ombre. (on peut réduire le nombre d'échantillons mai sle rendu sera moins réaliste, ou réduire la géométrie des objets)
+deuxième algo: ???
+rendu de la scène par rapport à des échantillons
+venir récupérer pour chacun de ces rendus faire une seule carte ?
+
+
+
+algorithmes d'approches shadow volume
+
+
+

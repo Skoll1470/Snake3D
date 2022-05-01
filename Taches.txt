@@ -1,0 +1,16 @@
+important : éclairage, interaction, collision
+
+- caméra done
+- map/mouvement done
+- corps du snake
+- système de grille
+
+
+direction 
+0 = gauche
+1 = bas
+2= droite
+3 = haut
+
+corps :
+
