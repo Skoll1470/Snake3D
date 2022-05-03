@@ -47,6 +47,8 @@ ObjectSnake snakeBody[256];
 // Personnage bougeable
 ObjectSnake snake;
 
+Collider colliders[256];
+
 bool debug = true;
 
 float snakeSpeed=0.1;
@@ -294,15 +296,18 @@ int main( void )
         processInput(window);
 
         updateSnake();
-
-
         //ajout de partie du corps
         if(nbFrames>=60){
-            nbFrames=0;
             maxRank++;
+/*
+            snakeBody[i].transform->m[0]=vec3(0.f,0.f,snakeSpeed);
+        snakeBody[i].transform->angle=mouvements[i];
+        snakeBody[i].transform->t=rot*snakeBody[i].transform->t;
+        *snakeBody[i].relativParent=rot*(*snakeBody[i].relativParent);*/
+
             mat3 rot=mat3(vec3(cos(snakeBody[maxRank-1].transform->newangle), sin(snakeBody[maxRank-1].transform->newangle), 0.0), vec3(-sin(snakeBody[maxRank-1].transform->newangle), cos(snakeBody[maxRank-1].transform->newangle), 0.0), vec3(0.0, 0.0, snakeBody[maxRank-1].transform->newangle));
             snakeTransforms[maxRank]=trans2;
-            snakeRP[maxRank]=snakeRP[maxRank-1]+((mat3(vec3(cos(snakeBody[maxRank-1].transform->newangle+snakeBody[maxRank-1].transform->angle), sin(snakeBody[maxRank-1].transform->newangle+snakeBody[maxRank-1].transform->angle), 0.0), vec3(-sin(snakeBody[maxRank-1].transform->newangle+snakeBody[maxRank-1].transform->angle), cos(snakeBody[maxRank-1].transform->newangle+snakeBody[maxRank-1].transform->angle), 0.0), vec3(0.0, 0.0, snakeBody[maxRank-1].transform->newangle+snakeBody[maxRank-1].transform->angle)))*vec3(-0.9,0.f,0.f));
+            snakeRP[maxRank]=snakeRP[maxRank-1]+((mat3(vec3(cos(snakeBody[maxRank-1].transform->newangle+snakeBody[maxRank-1].transform->angle), sin(snakeBody[maxRank-1].transform->newangle+snakeBody[maxRank-1].transform->angle), 0.0), vec3(-sin(snakeBody[maxRank-1].transform->newangle+snakeBody[maxRank-1].transform->angle), cos(snakeBody[maxRank-1].transform->newangle+snakeBody[maxRank-1].transform->angle), 0.0), vec3(0.0, 0.0, snakeBody[maxRank-1].transform->newangle+snakeBody[maxRank-1].transform->angle)))*vec3(-0.8,0.f,0.f));
             mouvements.push_back(mouvements[maxRank-1]);
             ObjectSnake snake3 = ObjectSnake(indices, indexed_vertices, uv_surface, triangles, &snakeTransforms[maxRank], &null, &snakeRP[maxRank], "2k_sun.bmp",maxRank);
             snake3.calculUVSphere();
@@ -313,6 +318,8 @@ int main( void )
             snake3.transform->m[0]=snakeBody[maxRank-1].transform->m[0];
             snakeBody[maxRank]=snake3;
             GDS.push_back(&snakeBody[maxRank]);
+            nbFrames=0;
+            //*snakeBody[maxRank].relativParent=mat3(vec3(cos(mouvements[maxRank]), sin(mouvements[maxRank]), 0.0), vec3(-sin(mouvements[maxRank]), cos(mouvements[maxRank]), 0.0), vec3(0.0, 0.0, mouvements[maxRank]))**snakeBody[maxRank].relativParent;
         }
 
         // Clear the screen
@@ -324,15 +331,27 @@ int main( void )
         // Change de mesh selon la distance
         unsigned int grapheSize = GDS.size();
 
-        std::cout<<grapheSize<<std::endl;
+        /*for(int i=0;i<=maxRank;i++){
+            std::cout<<(*snakeBody[i].relativParent)[0]<<" "<<(*snakeBody[i].relativParent)[1]<<" "<<(*snakeBody[i].relativParent)[2]<<std::endl;
+        }*/
 
 
         // Dessin et update du graphe de scenes
         for(unsigned int i = 0; i < grapheSize; i++){
 
+            colliders[i].updateCollider(*GDS[i]);
+
             GDS[i]->update();
 
-            std::cout<<i<<" = "<<GDS[i]->transform->newangle<<std::endl;
+                //std::cout<<colliders[0].isColliding(colliders[1])<<std::endl;
+                if(colliders[0].isColliding(colliders[i])){
+                    std::cout<<"JE COLLIDE OUI"<<std::endl;
+                }
+
+            std::cout<<"Collider de "<<i<<std::endl;
+            for(int j=0;j<4;j++){
+                std::cout<<colliders[i].points[j][0]<<" "<<colliders[i].points[j][1]<<" "<<colliders[i].points[j][2]<<std::endl;
+            }
 
             // MVP
             mat4 model = GDS[i]->getModel();

@@ -233,3 +233,61 @@ public :
 	}
 
 };
+
+
+class Collider {
+
+private :
+
+public :
+
+	vec3 points[4];
+
+	Collider(){
+		for(int i=0;i<4;i++){
+			points[i]=vec3(0.f,0.f,0.f);
+		}
+	}
+
+	void updateCollider(Object &o){
+		float minX=o.indexed_vertices[0][0];
+		float minY=o.indexed_vertices[0][1];
+		float maxX=o.indexed_vertices[0][0];
+		float maxY=o.indexed_vertices[0][1];
+
+		for(int i=1;i<o.indexed_vertices.size();i++){
+			if(o.indexed_vertices[i][0]<minX){
+				minX=o.indexed_vertices[i][0];	
+			}
+
+			if(o.indexed_vertices[i][1]<minY){
+				minY=o.indexed_vertices[i][1];	
+			}
+
+			if(o.indexed_vertices[i][0]>maxX){
+				maxX=o.indexed_vertices[i][0];	
+			}
+
+			if(o.indexed_vertices[i][1]>maxY){
+				maxY=o.indexed_vertices[i][1];	
+			}
+		}
+
+		points[0]=(o.transform->m[1] * vec3(minX,minY,0.f)) + o.transform->newt + *o.relativParent;
+		points[1]=(o.transform->m[1] * vec3(maxX,minY,0.f)) + o.transform->newt + *o.relativParent;
+		points[2]=(o.transform->m[1] * vec3(maxX,maxY,0.f)) + o.transform->newt + *o.relativParent;
+		points[3]=(o.transform->m[1] * vec3(minX,maxY,0.f)) + o.transform->newt + *o.relativParent; 
+	}
+
+	bool isColliding(Collider &c){
+		bool res=false;
+		for(int i=0;i<4;i++){
+			if(points[0][0]<=c.points[i][0] and points[2][0]>=c.points[i][0] and points[0][1]<=c.points[i][1] and points[2][1]>=c.points[i][1]){
+				res=true;
+				break;
+			}
+		}
+		return res;
+	}
+
+};
