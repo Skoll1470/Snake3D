@@ -200,7 +200,7 @@ int main( void )
     std::vector<unsigned short> indices;
     std::vector<glm::vec3> indexed_vertices;
     std::vector<std::vector<unsigned short> > triangles;
-    std::string filename("sphere.off");
+    std::string filename("modele_snake/sphere.off");
     loadOFF(filename, indexed_vertices, indices, triangles);
 
 
