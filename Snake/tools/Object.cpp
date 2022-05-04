@@ -250,6 +250,8 @@ public :
 	}
 
 	void updateCollider(Object &o){
+
+
 		float minX=o.indexed_vertices[0][0];
 		float minY=o.indexed_vertices[0][1];
 		float maxX=o.indexed_vertices[0][0];

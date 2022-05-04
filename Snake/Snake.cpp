@@ -42,12 +42,10 @@ bool isPressed = false;
 
 int resolution = 19;
 int size = 19;
+
 ObjectSnake snakeBody[256];
 
-// Personnage bougeable
-ObjectSnake snake;
-
-Collider colliders[256];
+Collider colliders[512];
 
 bool debug = true;
 
@@ -61,10 +59,6 @@ vec3 snakeRP[256];
 
 std::vector<Object*> GDS;
 
-std::vector<unsigned short> indices;
-std::vector<glm::vec3> indexed_vertices;
-std::vector<std::vector<unsigned short> > triangles;
-std::vector<float> uv_surface;
 Object null = Object();
 
 
@@ -116,26 +110,9 @@ void createSurface(std::vector<unsigned short>& indices,std::vector<glm::vec3>& 
     }
 }
 
-/*void addBodyPart(){
-    maxRank++;
-    mat3 m = glm::mat3(vec3(0.0f,-1.0f,0.0f),vec3(0.5f,0.5f,0.5f),vec3(.0f,0.0f,1.0f));
-    Transform trans = Transform(m, vec3(0.f,0.f,0.f), 0.f, 0.f);
-    snakeTransforms[maxRank]=Transform(m, vec3(0.f,0.f,0.f), 0.f, 0.f);
-    snakeRP[maxRank]=vec3(-0.9*maxRank,0.f,0.f);
-    ObjectSnake newBodyPart=ObjectSnake(indices,indexed_vertices,uv_surface,triangles,&snakeTransforms[maxRank],&null,&snakeRP[maxRank],"2k_sun.bmp",maxRank);
-    newBodyPart.calculUVSphere();
-    newBodyPart.transform->newt=snakeBody[maxRank-1].transform->newt;
-    snakeBody[maxRank]=newBodyPart;
-    GDS.push_back(&snakeBody[maxRank]);
-    mouvements.push_back(0.f);
-}  */
-
 int main( void )
 {
     GDS.clear();
-    indices.clear();
-    uv_surface.clear();
-    indexed_vertices.clear();
     // Initialise GLFW
     if( !glfwInit() )
     {
@@ -202,17 +179,21 @@ int main( void )
     std::vector<unsigned short> indices;
     std::vector<glm::vec3> indexed_vertices;
     std::vector<std::vector<unsigned short> > triangles;
-    std::string filename("modele_snake/sphere.off");
+    std::string filename("modele_snake/head.off");
     loadOFF(filename, indexed_vertices, indices, triangles);
 
 
-    std::vector<unsigned short> indices2; //Triangles concaténés dans une liste
-    std::vector<glm::vec3> indexed_vertices2;
-    loadOFF("icosahedron.off", indexed_vertices2, indices2, triangles);
+    std::vector<unsigned short> indices_body; //Triangles concaténés dans une liste
+    std::vector<glm::vec3> indexed_vertices_body;
+    loadOFF("modele_snake/body.off", indexed_vertices_body, indices_body, triangles);
 
-    std::vector<unsigned short> indices3; //Triangles concaténés dans une liste
-    std::vector<glm::vec3> indexed_vertices3;
-    loadOFF("pyramid.off", indexed_vertices3, indices3, triangles);
+    std::vector<unsigned short> indices_tail; //Triangles concaténés dans une liste
+    std::vector<glm::vec3> indexed_vertices_tail;
+    loadOFF("modele_snake/tail.off", indexed_vertices_tail, indices_tail, triangles);
+
+    std::vector<unsigned short> indices_fruit; //Triangles concaténés dans une liste
+    std::vector<glm::vec3> indexed_vertices_fruit;
+    loadOFF("modele_snake/fruit.off", indexed_vertices_fruit, indices_fruit, triangles);    
 
     std::vector<unsigned short> indices_surface;
     std::vector<glm::vec3> indexed_vertices_surface;
@@ -229,6 +210,13 @@ int main( void )
     vec3 rp1 = vec3(0.0f,0.0f,0.0f);
     Object surface = Object(indices_surface, indexed_vertices_surface, uv_surface, triangles, &transSurface, &null, &rp1, "tex_grass.bmp", "hmap_defaut.bmp");
     GDS.push_back(&surface);
+
+
+    Transform transFruit=Transform(mSurface,t,0.f,0.f);
+    Object fruit = Object(indices_fruit,indexed_vertices_fruit,uv_surface,triangles, &transFruit, &null, &rp1, "2k_sun.bmp");
+    fruit.calculUVSphere();
+    fruit.transform->newt=vec3(14.f, 8.f, 0.f);
+    GDS.push_back(&fruit);
     
 
     mat3 m2 = glm::mat3(vec3(0.0f,-1.0f,0.0f),vec3(0.5f,0.5f,0.5f),vec3(.0f,0.0f,1.0f));
@@ -237,13 +225,13 @@ int main( void )
     snakeTransforms[1]=trans2;
 
     snakeRP[0]=rp1;
-    snake = ObjectSnake(indices, indexed_vertices, uv_surface, triangles, &snakeTransforms[0], &null, &rp1, "2k_sun.bmp",0);
+    ObjectSnake snake = ObjectSnake(indices, indexed_vertices, uv_surface, triangles, &snakeTransforms[0], &null, &rp1, "2k_sun.bmp",0);
     snake.calculUVSphere();
 
     vec3 rp2 = vec3(-0.9f,0.0f,0.0f);
     snakeRP[1]=rp2;
 
-    ObjectSnake snake2 = ObjectSnake(indices, indexed_vertices, uv_surface, triangles, &snakeTransforms[1], &null, &snakeRP[1], "2k_sun.bmp",1);
+    ObjectSnake snake2 = ObjectSnake(indices_body, indexed_vertices_body, uv_surface, triangles, &snakeTransforms[1], &null, &snakeRP[1], "2k_sun.bmp",1);
     snake2.calculUVSphere();
     snakeBody[0]=snake;
     snakeBody[1]=snake2;
@@ -253,7 +241,7 @@ int main( void )
         maxRank++;
         snakeTransforms[maxRank]=trans2;
         snakeRP[maxRank]=vec3(-0.9*maxRank,0.f,0.f);
-        ObjectSnake snake3 = ObjectSnake(indices, indexed_vertices, uv_surface, triangles, &snakeTransforms[maxRank], &null, &snakeRP[maxRank], "2k_sun.bmp",maxRank);
+        ObjectSnake snake3 = ObjectSnake(indices_tail, indexed_vertices_tail, uv_surface, triangles, &snakeTransforms[maxRank], &null, &snakeRP[maxRank], "2k_sun.bmp",maxRank);
         snake3.calculUVSphere();
         snakeBody[maxRank]=snake3;
     }    
@@ -286,9 +274,9 @@ int main( void )
         // input
         // -----
 
-        for(int i=1;i<GDS.size();i++){
+        for(int i=0;i<maxRank;i++){
             //GDS[i].transform->m[0]=vec3(0.f);
-            GDS[i]->transform->angle=0.f;
+            snakeBody[i].transform->angle=0.f;
         }
 
         mouvements[0]=0.f;
@@ -296,31 +284,6 @@ int main( void )
         processInput(window);
 
         updateSnake();
-        //ajout de partie du corps
-        if(nbFrames>=60){
-            maxRank++;
-/*
-            snakeBody[i].transform->m[0]=vec3(0.f,0.f,snakeSpeed);
-        snakeBody[i].transform->angle=mouvements[i];
-        snakeBody[i].transform->t=rot*snakeBody[i].transform->t;
-        *snakeBody[i].relativParent=rot*(*snakeBody[i].relativParent);*/
-
-            mat3 rot=mat3(vec3(cos(snakeBody[maxRank-1].transform->newangle), sin(snakeBody[maxRank-1].transform->newangle), 0.0), vec3(-sin(snakeBody[maxRank-1].transform->newangle), cos(snakeBody[maxRank-1].transform->newangle), 0.0), vec3(0.0, 0.0, snakeBody[maxRank-1].transform->newangle));
-            snakeTransforms[maxRank]=trans2;
-            snakeRP[maxRank]=snakeRP[maxRank-1]+((mat3(vec3(cos(snakeBody[maxRank-1].transform->newangle+snakeBody[maxRank-1].transform->angle), sin(snakeBody[maxRank-1].transform->newangle+snakeBody[maxRank-1].transform->angle), 0.0), vec3(-sin(snakeBody[maxRank-1].transform->newangle+snakeBody[maxRank-1].transform->angle), cos(snakeBody[maxRank-1].transform->newangle+snakeBody[maxRank-1].transform->angle), 0.0), vec3(0.0, 0.0, snakeBody[maxRank-1].transform->newangle+snakeBody[maxRank-1].transform->angle)))*vec3(-0.8,0.f,0.f));
-            mouvements.push_back(mouvements[maxRank-1]);
-            ObjectSnake snake3 = ObjectSnake(indices, indexed_vertices, uv_surface, triangles, &snakeTransforms[maxRank], &null, &snakeRP[maxRank], "2k_sun.bmp",maxRank);
-            snake3.calculUVSphere();
-            snake3.transform->newangle=snakeBody[maxRank-1].transform->newangle;
-            snake3.transform->m[0]=vec3(0.f,0.f,snakeSpeed);
-            snake3.transform->t=rot*vec3(snakeSpeed,0.f,0.f);
-            snake3.transform->newt=snakeBody[maxRank-1].transform->newt;
-            snake3.transform->m[0]=snakeBody[maxRank-1].transform->m[0];
-            snakeBody[maxRank]=snake3;
-            GDS.push_back(&snakeBody[maxRank]);
-            nbFrames=0;
-            //*snakeBody[maxRank].relativParent=mat3(vec3(cos(mouvements[maxRank]), sin(mouvements[maxRank]), 0.0), vec3(-sin(mouvements[maxRank]), cos(mouvements[maxRank]), 0.0), vec3(0.0, 0.0, mouvements[maxRank]))**snakeBody[maxRank].relativParent;
-        }
 
         // Clear the screen
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -335,7 +298,6 @@ int main( void )
             std::cout<<(*snakeBody[i].relativParent)[0]<<" "<<(*snakeBody[i].relativParent)[1]<<" "<<(*snakeBody[i].relativParent)[2]<<std::endl;
         }*/
 
-
         // Dessin et update du graphe de scenes
         for(unsigned int i = 0; i < grapheSize; i++){
 
@@ -343,10 +305,36 @@ int main( void )
 
             GDS[i]->update();
 
-                //std::cout<<colliders[0].isColliding(colliders[1])<<std::endl;
-                if(colliders[0].isColliding(colliders[i])){
-                    std::cout<<"JE COLLIDE OUI"<<std::endl;
+            //std::cout<<colliders[0].isColliding(colliders[1])<<std::endl;
+            if(i==2){
+                //ajout de partie du corps
+                if(colliders[1].isColliding(colliders[2])){
+                    maxRank++;
+
+                    mat3 rot=mat3(vec3(cos(snakeBody[maxRank-1].transform->newangle), sin(snakeBody[maxRank-1].transform->newangle), 0.0), vec3(-sin(snakeBody[maxRank-1].transform->newangle), cos(snakeBody[maxRank-1].transform->newangle), 0.0), vec3(0.0, 0.0, snakeBody[maxRank-1].transform->newangle));
+                    snakeTransforms[maxRank]=trans2;
+                    snakeRP[maxRank]=snakeRP[maxRank-1]+((mat3(vec3(cos(snakeBody[maxRank-1].transform->newangle+snakeBody[maxRank-1].transform->angle), sin(snakeBody[maxRank-1].transform->newangle+snakeBody[maxRank-1].transform->angle), 0.0), vec3(-sin(snakeBody[maxRank-1].transform->newangle+snakeBody[maxRank-1].transform->angle), cos(snakeBody[maxRank-1].transform->newangle+snakeBody[maxRank-1].transform->angle), 0.0), vec3(0.0, 0.0, snakeBody[maxRank-1].transform->newangle+snakeBody[maxRank-1].transform->angle)))*vec3(-0.8,0.f,0.f));
+                    mouvements.push_back(mouvements[maxRank-1]);
+                    ObjectSnake snake3 = ObjectSnake(indices_tail, indexed_vertices_tail, uv_surface, triangles, &snakeTransforms[maxRank], &null, &snakeRP[maxRank], "2k_sun.bmp",maxRank);
+                    snake3.calculUVSphere();
+                    snake3.transform->newangle=snakeBody[maxRank-1].transform->newangle;
+                    snake3.transform->m[0]=vec3(0.f,0.f,snakeSpeed);
+                    snake3.transform->t=rot*vec3(snakeSpeed,0.f,0.f);
+                    snake3.transform->newt=snakeBody[maxRank-1].transform->newt;
+                    snake3.transform->m[0]=snakeBody[maxRank-1].transform->m[0];
+                    snakeBody[maxRank]=snake3;
+                    GDS.push_back(&snakeBody[maxRank]);
+                    nbFrames=0;
+
+                    snakeBody[maxRank-1].indices=indices_body;
+                    snakeBody[maxRank-1].indexed_vertices=indexed_vertices_body;
+                    snakeBody[maxRank-1].calculUVSphere();
+
+                    float randomX = static_cast <float> (rand()) / (static_cast <float> (RAND_MAX/18));
+                    float randomY = static_cast <float> (rand()) / (static_cast <float> (RAND_MAX/18));
+                    GDS[1]->transform->newt=vec3(randomX,randomY,0.f);    
                 }
+            }
 
             std::cout<<"Collider de "<<i<<std::endl;
             for(int j=0;j<4;j++){
@@ -358,15 +346,12 @@ int main( void )
             if(i==1){
             	model = glm::translate(model,vec3(0.0,0.0,0.8));
             }
-            //model=glm::scale(model,vec3(0.5,0.5,0.5));
             mat4 view = glm::lookAt(camera_position, camera_position + camera_target, camera_up);
 
             // Rotation
             view = glm::rotate(view, angleX, glm::vec3(1,0,0));
             view = glm::rotate(view, angleY, glm::vec3(0,1,0));
             view = glm::rotate(view, angleZ, glm::vec3(0,0,1));
-
-            //view = glm::rotate(view, 200.0f, glm::vec3(1,0,0));
 
             mat4 projection = glm::perspective<float>(glm::radians(45.0f), 4.0f / 3.0f, 1.f, 100.f);
 
@@ -380,26 +365,6 @@ int main( void )
             glUniform1i(GDS[i]->heightmapID,1);
 
             // Check si on touche quand on déplace
-            /*if(surface.transform->newt[0] <= snake.transform->newt[0] and snake.transform->newt[0] <= surface.transform->newt[0] + 1){
-                if(surface.transform->newt[1] <= snake.transform->newt[1] and snake.transform->newt[1] <= surface.transform->newt[1] + 1){
-                    bool find = false;
-                    float step = size / (float) resolution;
-
-                    for(float i = 0; i <= 1; i+=step){
-                        for(float j = 0; j <= 1; j+=step){
-                            if(surface.transform->newt[0] + j <= snake.transform->newt[0] and snake.transform->newt[0] <= surface.transform->newt[0] + j+step){
-                                if(surface.transform->newt[1]+i <= snake.transform->newt[1] and snake.transform->newt[1] <= surface.transform->newt[1] + i+step){
-                                    glUniform1f(glGetUniformLocation(programID,"x"), j);
-                                    glUniform1f(glGetUniformLocation(programID,"y"), i);
-                                    find = true;
-                                    break;
-                                }
-                            }
-                        }
-                            if(find) break;
-                    }
-                }
-            }*/
 
             GDS[i]->draw();
 
@@ -434,7 +399,7 @@ void processInput(GLFWwindow *window)
 
     if(glfwGetKey(window, GLFW_KEY_P) == GLFW_PRESS){
 	    debug = true;
-		snake.transform->t=vec3(0.0,0.0,0.0);
+		snakeBody[0].transform->t=vec3(0.0,0.0,0.0);
 	}
     
     if(glfwGetKey(window, GLFW_KEY_O) == GLFW_PRESS){
@@ -442,7 +407,6 @@ void processInput(GLFWwindow *window)
         for(int i=0;i<=maxRank;i++){
             snakeBody[i].transform->t=vec3(snakeSpeed,0.f,0.f);
         }
-    	//camera_target = -camera_up;
     }
     		
 
@@ -494,17 +458,6 @@ void processInput(GLFWwindow *window)
         float rad=snakeSpeed;
 
     	// Déplacement du serpent
-    	/*if(glfwGetKey(window,GLFW_KEY_W) == GLFW_PRESS && direction != 1)
-    	{
-        	snake.transform->t=(vec3(0.0,snakeSpeed,0.0));
-        	direction = 3;
-    	}
-    
-	    if(glfwGetKey(window,GLFW_KEY_S) == GLFW_PRESS && direction != 3)
-	    {
-	        snake.transform->t=(vec3(0.0,-snakeSpeed,0.0));
-	        direction = 1;
-	    }*/
 	    
 	    if(glfwGetKey(window,GLFW_KEY_A) == GLFW_PRESS)
 	    {
