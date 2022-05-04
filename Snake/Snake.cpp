@@ -110,6 +110,120 @@ void createSurface(std::vector<unsigned short>& indices,std::vector<glm::vec3>& 
     }
 }
 
+void createMurV(std::vector<unsigned short>& indices_mur, std::vector<vec3>& indexed_vertices_mur){
+    indices_mur.clear();
+    indexed_vertices_mur.clear();
+
+    indices_mur.push_back(0);
+    indices_mur.push_back(1);
+    indices_mur.push_back(2);
+    indices_mur.push_back(2);
+    indices_mur.push_back(3);
+    indices_mur.push_back(0);
+
+    indices_mur.push_back(3);
+    indices_mur.push_back(2);
+    indices_mur.push_back(6);
+    indices_mur.push_back(6);
+    indices_mur.push_back(7);
+    indices_mur.push_back(3);
+
+    indices_mur.push_back(0);
+    indices_mur.push_back(1);
+    indices_mur.push_back(5);
+    indices_mur.push_back(5);
+    indices_mur.push_back(4);
+    indices_mur.push_back(0);
+
+    indices_mur.push_back(2);
+    indices_mur.push_back(1);
+    indices_mur.push_back(5);
+    indices_mur.push_back(5);
+    indices_mur.push_back(6);
+    indices_mur.push_back(2);
+
+    indices_mur.push_back(0);
+    indices_mur.push_back(3);
+    indices_mur.push_back(7);
+    indices_mur.push_back(7);
+    indices_mur.push_back(4);
+    indices_mur.push_back(0);
+
+    indices_mur.push_back(4);
+    indices_mur.push_back(5);
+    indices_mur.push_back(6);
+    indices_mur.push_back(6);
+    indices_mur.push_back(7);
+    indices_mur.push_back(4);
+
+    indexed_vertices_mur.push_back(vec3(-1.f,-1.f,0.f));
+    indexed_vertices_mur.push_back(vec3(0.f,-1.f,0.f));
+    indexed_vertices_mur.push_back(vec3(0.f,-1.f,2.f));
+    indexed_vertices_mur.push_back(vec3(-1.f,-1.f,2.f));
+
+    indexed_vertices_mur.push_back(vec3(-1.f,size,0.f));
+    indexed_vertices_mur.push_back(vec3(0.f,size,0.f));
+    indexed_vertices_mur.push_back(vec3(0.f,size,2.f));
+    indexed_vertices_mur.push_back(vec3(-1.f,size,2.f));
+}
+
+void createMurH(std::vector<unsigned short>& indices_mur, std::vector<vec3>& indexed_vertices_mur){
+    indices_mur.clear();
+    indexed_vertices_mur.clear();
+
+    indices_mur.push_back(0);
+    indices_mur.push_back(1);
+    indices_mur.push_back(2);
+    indices_mur.push_back(2);
+    indices_mur.push_back(3);
+    indices_mur.push_back(0);
+
+    indices_mur.push_back(3);
+    indices_mur.push_back(2);
+    indices_mur.push_back(6);
+    indices_mur.push_back(6);
+    indices_mur.push_back(7);
+    indices_mur.push_back(3);
+
+    indices_mur.push_back(0);
+    indices_mur.push_back(1);
+    indices_mur.push_back(5);
+    indices_mur.push_back(5);
+    indices_mur.push_back(4);
+    indices_mur.push_back(0);
+
+    indices_mur.push_back(2);
+    indices_mur.push_back(1);
+    indices_mur.push_back(5);
+    indices_mur.push_back(5);
+    indices_mur.push_back(6);
+    indices_mur.push_back(2);
+
+    indices_mur.push_back(0);
+    indices_mur.push_back(3);
+    indices_mur.push_back(7);
+    indices_mur.push_back(7);
+    indices_mur.push_back(4);
+    indices_mur.push_back(0);
+
+    indices_mur.push_back(4);
+    indices_mur.push_back(5);
+    indices_mur.push_back(6);
+    indices_mur.push_back(6);
+    indices_mur.push_back(7);
+    indices_mur.push_back(4);
+
+    indexed_vertices_mur.push_back(vec3(-1.f,0.f,0.f));
+    indexed_vertices_mur.push_back(vec3(-1.f,-1.f,0.f));
+    indexed_vertices_mur.push_back(vec3(-1.f,-1.f,2.f));
+    indexed_vertices_mur.push_back(vec3(-1.f,0.f,2.f));
+
+    indexed_vertices_mur.push_back(vec3(size,0.f,0.f));
+    indexed_vertices_mur.push_back(vec3(size,-1.f,0.f));
+    indexed_vertices_mur.push_back(vec3(size,-1.f,2.f));
+    indexed_vertices_mur.push_back(vec3(size,0.f,2.f));
+}
+
 int main( void )
 {
     GDS.clear();
@@ -193,7 +307,11 @@ int main( void )
 
     std::vector<unsigned short> indices_fruit; //Triangles concaténés dans une liste
     std::vector<glm::vec3> indexed_vertices_fruit;
-    loadOFF("modele_snake/fruit.off", indexed_vertices_fruit, indices_fruit, triangles);    
+    loadOFF("modele_snake/fruit.off", indexed_vertices_fruit, indices_fruit, triangles);
+
+    std::vector<unsigned short> indices_headDead; //Triangles concaténés dans une liste
+    std::vector<glm::vec3> indexed_vertices_headDead;
+    loadOFF("modele_snake/headDead.off", indexed_vertices_headDead, indices_headDead, triangles);    
 
     std::vector<unsigned short> indices_surface;
     std::vector<glm::vec3> indexed_vertices_surface;
@@ -204,7 +322,7 @@ int main( void )
     vec3 t = glm::vec3(0.0,0.0f,0.0f);
     Transform trans1=Transform();
 
-    mat3 mSurface = glm::mat3(vec3(1.0,0.0,0.0),vec3(1.0,1.0,1.0),vec3(1.0f));
+    mat3 mSurface = glm::mat3(vec3(0.0,1.0,0.0),vec3(1.0,1.0,1.0),vec3(1.0f));
     Transform transSurface = Transform(mSurface,t,0.f,0.f);
     
     vec3 rp1 = vec3(0.0f,0.0f,0.0f);
@@ -213,11 +331,41 @@ int main( void )
 
 
     Transform transFruit=Transform(mSurface,t,0.f,0.f);
-    Object fruit = Object(indices_fruit,indexed_vertices_fruit,uv_surface,triangles, &transFruit, &null, &rp1, "2k_sun.bmp");
+    Object fruit = Object(indices_fruit,indexed_vertices_fruit,uv_surface,triangles, &transFruit, &null, &rp1, "hmap_defaut.bmp");
     fruit.calculUVSphere();
-    fruit.transform->newt=vec3(14.f, 8.f, 0.f);
+    fruit.transform->newt=vec3(size - (size/4.f), size/2.f, 0.f);
     GDS.push_back(&fruit);
     
+
+    std::vector<unsigned short> indices_murV;
+    std::vector<vec3> indexed_vertices_murV;
+
+    createMurV(indices_murV,indexed_vertices_murV);
+
+    Object murG = Object(indices_murV,indexed_vertices_murV,uv_surface,triangles,&transSurface,&null,&rp1,"tex_rock.bmp");
+    murG.calculUVSphere();
+    GDS.push_back(&murG);
+
+    Transform transMurD=Transform(mSurface,t,0.f,0.f);
+    Object murD = Object(indices_murV,indexed_vertices_murV,uv_surface,triangles,&transMurD,&null,&rp1,"tex_rock.bmp");
+    murD.calculUVSphere();
+    murD.transform->newt=vec3(size,0.f,0.f);
+    GDS.push_back(&murD);
+
+    std::vector<unsigned short> indices_murH;
+    std::vector<vec3> indexed_vertices_murH;
+
+    createMurH(indices_murH,indexed_vertices_murH);
+
+    Object murB = Object(indices_murH,indexed_vertices_murH,uv_surface,triangles,&transSurface,&null,&rp1,"tex_rock.bmp");
+    murB.calculUVSphere();
+    GDS.push_back(&murB);
+
+    Transform transMurH=Transform(mSurface,t,0.f,0.f);
+    Object murH = Object(indices_murH,indexed_vertices_murH,uv_surface,triangles,&transMurH,&null,&rp1,"tex_rock.bmp");
+    murH.calculUVSphere();
+    murH.transform->newt=vec3(0.f,size,0.f);
+    GDS.push_back(&murH);
 
     mat3 m2 = glm::mat3(vec3(0.0f,-1.0f,0.0f),vec3(0.5f,0.5f,0.5f),vec3(.0f,0.0f,1.0f));
     Transform trans2 = Transform(m2, vec3(0.f,0.f,0.f), 0.f, 0.f);
@@ -250,7 +398,9 @@ int main( void )
     for(int i=0;i<=maxRank;i++){
         GDS.push_back(&snakeBody[i]);
         mouvements.push_back(0.f);
+        snakeBody[i].transform->newt=vec3(0 + (size/4.f), size/2.f, 0.f);
     }
+    camera_position = snake.transform->newt + vec3(0.,0., 20. + maxRank) * vec3(0.,0.,1.);
 
     // Get a handle for our "LightPosition" uniform
     glUseProgram(programID);
@@ -306,9 +456,9 @@ int main( void )
             GDS[i]->update();
 
             //std::cout<<colliders[0].isColliding(colliders[1])<<std::endl;
-            if(i==2){
+            if(i==6){
                 //ajout de partie du corps
-                if(colliders[1].isColliding(colliders[2])){
+                if(colliders[1].isColliding(colliders[6])){
                     maxRank++;
 
                     mat3 rot=mat3(vec3(cos(snakeBody[maxRank-1].transform->newangle), sin(snakeBody[maxRank-1].transform->newangle), 0.0), vec3(-sin(snakeBody[maxRank-1].transform->newangle), cos(snakeBody[maxRank-1].transform->newangle), 0.0), vec3(0.0, 0.0, snakeBody[maxRank-1].transform->newangle));
@@ -330,9 +480,21 @@ int main( void )
                     snakeBody[maxRank-1].indexed_vertices=indexed_vertices_body;
                     snakeBody[maxRank-1].calculUVSphere();
 
-                    float randomX = static_cast <float> (rand()) / (static_cast <float> (RAND_MAX/18));
-                    float randomY = static_cast <float> (rand()) / (static_cast <float> (RAND_MAX/18));
+                    float randomX = 1.f + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX/(size-2)));
+                    float randomY = 1.f + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX/(size-2)));
                     GDS[1]->transform->newt=vec3(randomX,randomY,0.f);    
+                }
+
+                for(int j=2;j<6;j++){
+                    if(colliders[j].isColliding(colliders[6])){
+                        debug=true;
+                        for(int i=0;i<=maxRank;i++){
+                            snakeBody[i].transform->t=vec3(0.f,0.f,0.f);
+                        }
+                        snakeBody[0].indices=indices_headDead;
+                        snakeBody[0].indexed_vertices=indexed_vertices_headDead;
+                        std::cout<<"PERDU"<<std::endl;
+                    }
                 }
             }
 
@@ -399,7 +561,9 @@ void processInput(GLFWwindow *window)
 
     if(glfwGetKey(window, GLFW_KEY_P) == GLFW_PRESS){
 	    debug = true;
-		snakeBody[0].transform->t=vec3(0.0,0.0,0.0);
+		for(int i=0;i<=maxRank;i++){
+            snakeBody[i].transform->t=vec3(0.f,0.f,0.f);
+        }
 	}
     
     if(glfwGetKey(window, GLFW_KEY_O) == GLFW_PRESS){
