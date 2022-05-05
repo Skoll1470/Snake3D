@@ -8,11 +8,17 @@ uniform int useHeightmap;
 
 out vec2 UV;
 
+uniform mat4 projection;
+uniform mat4 view;
+uniform mat4 model;
 uniform mat4 mvp;
-out float z;
 
 uniform float x;
 uniform float y;
+
+out vec2 TexCoords;
+out vec3 WorldPos;
+out vec3 Normal;
 
 void main(){
 
@@ -28,5 +34,10 @@ void main(){
         gl_Position = mvp * Position;
 
         UV = vertexUV;
+
+        TexCoords = vertexUV;
+        WorldPos = vec3(model * vec4(vertices_position_modelspace, 1.0));
+        Normal = mat3(model) * WorldPos;   
+
 }
 
