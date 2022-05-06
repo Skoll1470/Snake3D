@@ -12,6 +12,7 @@
 #include <common/vboindexer.hpp>
 #include <common/texture.hpp>
 #include "tools/Object.cpp"
+#include "tools/Shader.h"
 #include <typeinfo>
 
 GLFWwindow* window;
@@ -41,7 +42,7 @@ float angleZ = 0.0f;
 bool isPressed = false;
 
 int resolution = 19;
-int size = 19;
+int size = 25;
 
 ObjectSnake snakeBody[256];
 
@@ -61,6 +62,17 @@ std::vector<Object*> GDS;
 
 Object null = Object();
 
+struct Light {
+    vec3 position;
+    vec3 color;
+}; 
+
+Light light;
+
+void setLight(){
+    light.position;
+    light.color = vec3 (300, 300, 300);
+}
 
 //mise à jour du mouvement et des rotations des parties du corps
 void updateSnake(){
@@ -69,10 +81,10 @@ void updateSnake(){
     }
     for(int i=0;i<=maxRank;i++){
         mat3 rot = mat3(vec3(cos(mouvements[i]), sin(mouvements[i]), 0.0), vec3(-sin(mouvements[i]), cos(mouvements[i]), 0.0), vec3(0.0, 0.0, mouvements[i]));
-        snakeBody[i].transform->m[0]=vec3(0.f,0.f,snakeSpeed);
-        snakeBody[i].transform->angle=mouvements[i];
-        snakeBody[i].transform->t=rot*snakeBody[i].transform->t;
-        *snakeBody[i].relativParent=rot*(*snakeBody[i].relativParent);
+        snakeBody[i].transform->m[0] = vec3(0.f,0.f,snakeSpeed);
+        snakeBody[i].transform->angle = mouvements[i];
+        snakeBody[i].transform->t = rot*snakeBody[i].transform->t;
+        *snakeBody[i].relativParent = rot*(*snakeBody[i].relativParent);
     }
 }
 
@@ -287,7 +299,13 @@ int main( void )
     glBindVertexArray(VertexArrayID);
 
     // Create and compile our GLSL program from the shaders
-    GLuint programID = LoadShaders( "vertex_shader.glsl", "fragment_shader.glsl" );
+    Shader shader("vertex_shader.glsl", "fragment_shader.glsl");
+    shader.use();
+
+    //shader.setVec3("albedo", 0.5f, 0.0f, 0.0f);
+    shader.setFloat("ao", 1.0f);
+
+    shader.use();
 
     // Chargement des 3 meshs selon la distance
     std::vector<unsigned short> indices;
@@ -403,13 +421,14 @@ int main( void )
     camera_position = snake.transform->newt + vec3(0.,0., 20. + maxRank) * vec3(0.,0.,1.);
 
     // Get a handle for our "LightPosition" uniform
-    glUseProgram(programID);
-    GLuint LightID = glGetUniformLocation(programID, "LightPosition_worldspace");
+    glUseProgram(shader.ID);
+    GLuint LightID = glGetUniformLocation(shader.ID, "LightPosition_worldspace");
 
     // For speed computation
     double lastTime = glfwGetTime();
     int nbFrames = 0;
 
+    setLight();
     do{
         if(!debug){
             nbFrames++;
@@ -439,7 +458,7 @@ int main( void )
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         // Use our shader
-        glUseProgram(programID);
+        glUseProgram(shader.ID);
 
         // Change de mesh selon la distance
         unsigned int grapheSize = GDS.size();
@@ -498,28 +517,34 @@ int main( void )
                 }
             }
 
-            std::cout<<"Collider de "<<i<<std::endl;
-            for(int j=0;j<4;j++){
-                std::cout<<colliders[i].points[j][0]<<" "<<colliders[i].points[j][1]<<" "<<colliders[i].points[j][2]<<std::endl;
-            }
+            // std::cout<<"Collider de "<<i<<std::endl;
+            // for(int j=0;j<4;j++){
+            //     std::cout<<colliders[i].points[j][0]<<" "<<colliders[i].points[j][1]<<" "<<colliders[i].points[j][2]<<std::endl;
+            // }
 
             // MVP
             mat4 model = GDS[i]->getModel();
             if(i==1){
             	model = glm::translate(model,vec3(0.0,0.0,0.8));
+
             }
+            shader.setMat4("model",model);
+
             mat4 view = glm::lookAt(camera_position, camera_position + camera_target, camera_up);
 
             // Rotation
             view = glm::rotate(view, angleX, glm::vec3(1,0,0));
             view = glm::rotate(view, angleY, glm::vec3(0,1,0));
             view = glm::rotate(view, angleZ, glm::vec3(0,0,1));
+            shader.setMat4("view", view);
+
 
             mat4 projection = glm::perspective<float>(glm::radians(45.0f), 4.0f / 3.0f, 1.f, 100.f);
+            shader.setMat4("projection", projection);
+
 
             mat4 mvp =  projection * view * model;
-            GLuint mvpID = glGetUniformLocation(programID, "mvp");
-
+            GLuint mvpID = glGetUniformLocation(shader.ID, "mvp");
 
             glUniformMatrix4fv(mvpID,1,GL_FALSE, &mvp[0][0]);
             glActiveTexture(GL_TEXTURE1);
@@ -527,12 +552,19 @@ int main( void )
             glUniform1i(GDS[i]->heightmapID,1);
 
             // Check si on touche quand on déplace
+            shader.setVec3("camPos",camera_position);
+
+            shader.use();
+
+            shader.setVec3("lightPosition", light.position);
+            shader.setVec3("lightColor", light.color);
 
             GDS[i]->draw();
 
             if(!debug)
              	camera_position = snake.transform->newt + vec3(0.,0., 20. + maxRank) * vec3(0.,0.,1.);
-        
+            
+            light.position = vec3(0.5) * camera_position;
         }
         // Swap buffers
         glfwSwapBuffers(window);
@@ -542,7 +574,6 @@ int main( void )
            glfwWindowShouldClose(window) == 0 );
 
     // Cleanup VBO and shader
-    glDeleteProgram(programID);
     glDeleteVertexArrays(1, &VertexArrayID);
 
     // Close OpenGL window and terminate GLFW
@@ -557,8 +588,7 @@ int main( void )
 void processInput(GLFWwindow *window)
 {
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-        glfwSetWindowShouldClose(window, true);   
-
+        glfwSetWindowShouldClose(window, true);
     if(glfwGetKey(window, GLFW_KEY_P) == GLFW_PRESS){
 	    debug = true;
 		for(int i=0;i<=maxRank;i++){
