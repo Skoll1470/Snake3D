@@ -81,10 +81,11 @@ void updateSnake(){
     }
     for(int i=0;i<=maxRank;i++){
         mat3 rot = mat3(vec3(cos(mouvements[i]), sin(mouvements[i]), 0.0), vec3(-sin(mouvements[i]), cos(mouvements[i]), 0.0), vec3(0.0, 0.0, mouvements[i]));
+        mat3 rot2=mat3(vec3(cos(snakeBody[i].transform->newangle), sin(snakeBody[i].transform->newangle), 0.0), vec3(-sin(snakeBody[i].transform->newangle), cos(snakeBody[i].transform->newangle), 0.0), vec3(0.0, 0.0, snakeBody[i].transform->newangle));                    
         snakeBody[i].transform->m[0] = vec3(0.f,0.f,snakeSpeed);
         snakeBody[i].transform->angle = mouvements[i];
-        snakeBody[i].transform->t = rot*snakeBody[i].transform->t;
-        *snakeBody[i].relativParent = rot*(*snakeBody[i].relativParent);
+        snakeBody[i].transform->t = rot2*vec3(snakeSpeed,0.f,0.f);
+        *snakeBody[i].relativParent = rot2*vec3(-0.9*i,0.f,0.f);
     }
 }
 
@@ -173,10 +174,10 @@ void createMurV(std::vector<unsigned short>& indices_mur, std::vector<vec3>& ind
     indexed_vertices_mur.push_back(vec3(0.f,-1.f,2.f));
     indexed_vertices_mur.push_back(vec3(-1.f,-1.f,2.f));
 
-    indexed_vertices_mur.push_back(vec3(-1.f,size,0.f));
-    indexed_vertices_mur.push_back(vec3(0.f,size,0.f));
-    indexed_vertices_mur.push_back(vec3(0.f,size,2.f));
-    indexed_vertices_mur.push_back(vec3(-1.f,size,2.f));
+    indexed_vertices_mur.push_back(vec3(-1.f,size-1,0.f));
+    indexed_vertices_mur.push_back(vec3(0.f,size-1,0.f));
+    indexed_vertices_mur.push_back(vec3(0.f,size-1,2.f));
+    indexed_vertices_mur.push_back(vec3(-1.f,size-1,2.f));
 }
 
 void createMurH(std::vector<unsigned short>& indices_mur, std::vector<vec3>& indexed_vertices_mur){
@@ -230,10 +231,10 @@ void createMurH(std::vector<unsigned short>& indices_mur, std::vector<vec3>& ind
     indexed_vertices_mur.push_back(vec3(-1.f,-1.f,2.f));
     indexed_vertices_mur.push_back(vec3(-1.f,0.f,2.f));
 
-    indexed_vertices_mur.push_back(vec3(size,0.f,0.f));
-    indexed_vertices_mur.push_back(vec3(size,-1.f,0.f));
-    indexed_vertices_mur.push_back(vec3(size,-1.f,2.f));
-    indexed_vertices_mur.push_back(vec3(size,0.f,2.f));
+    indexed_vertices_mur.push_back(vec3(size-1,0.f,0.f));
+    indexed_vertices_mur.push_back(vec3(size-1,-1.f,0.f));
+    indexed_vertices_mur.push_back(vec3(size-1,-1.f,2.f));
+    indexed_vertices_mur.push_back(vec3(size-1,0.f,2.f));
 }
 
 int main( void )
@@ -367,7 +368,7 @@ int main( void )
     Transform transMurD=Transform(mSurface,t,0.f,0.f);
     Object murD = Object(indices_murV,indexed_vertices_murV,uv_surface,triangles,&transMurD,&null,&rp1,"tex_rock.bmp");
     murD.calculUVSphere();
-    murD.transform->newt=vec3(size,0.f,0.f);
+    murD.transform->newt=vec3(size-1,0.f,0.f);
     GDS.push_back(&murD);
 
     std::vector<unsigned short> indices_murH;
@@ -382,7 +383,7 @@ int main( void )
     Transform transMurH=Transform(mSurface,t,0.f,0.f);
     Object murH = Object(indices_murH,indexed_vertices_murH,uv_surface,triangles,&transMurH,&null,&rp1,"tex_rock.bmp");
     murH.calculUVSphere();
-    murH.transform->newt=vec3(0.f,size,0.f);
+    murH.transform->newt=vec3(0.f,size-1,0.f);
     GDS.push_back(&murH);
 
     mat3 m2 = glm::mat3(vec3(0.0f,-1.0f,0.0f),vec3(0.5f,0.5f,0.5f),vec3(.0f,0.0f,1.0f));
@@ -391,13 +392,13 @@ int main( void )
     snakeTransforms[1]=trans2;
 
     snakeRP[0]=rp1;
-    ObjectSnake snake = ObjectSnake(indices, indexed_vertices, uv_surface, triangles, &snakeTransforms[0], &null, &rp1, "2k_sun.bmp",0);
+    ObjectSnake snake = ObjectSnake(indices, indexed_vertices, uv_surface, triangles, &snakeTransforms[0], &null, &rp1, "text_test2.bmp",0);
     snake.calculUVSphere();
 
     vec3 rp2 = vec3(-0.9f,0.0f,0.0f);
     snakeRP[1]=rp2;
 
-    ObjectSnake snake2 = ObjectSnake(indices_body, indexed_vertices_body, uv_surface, triangles, &snakeTransforms[1], &null, &snakeRP[1], "2k_sun.bmp",1);
+    ObjectSnake snake2 = ObjectSnake(indices_body, indexed_vertices_body, uv_surface, triangles, &snakeTransforms[1], &null, &snakeRP[1], "text_test2.bmp",1);
     snake2.calculUVSphere();
     snakeBody[0]=snake;
     snakeBody[1]=snake2;
@@ -407,7 +408,7 @@ int main( void )
         maxRank++;
         snakeTransforms[maxRank]=trans2;
         snakeRP[maxRank]=vec3(-0.9*maxRank,0.f,0.f);
-        ObjectSnake snake3 = ObjectSnake(indices_tail, indexed_vertices_tail, uv_surface, triangles, &snakeTransforms[maxRank], &null, &snakeRP[maxRank], "2k_sun.bmp",maxRank);
+        ObjectSnake snake3 = ObjectSnake(indices_tail, indexed_vertices_tail, uv_surface, triangles, &snakeTransforms[maxRank], &null, &snakeRP[maxRank], "text_test2.bmp",maxRank);
         snake3.calculUVSphere();
         snakeBody[maxRank]=snake3;
     }    
@@ -454,6 +455,12 @@ int main( void )
 
         updateSnake();
 
+        if(debug){
+            for(int i=0;i<=maxRank;i++){
+                snakeBody[i].transform->t=vec3(0.f);
+            }
+        }
+
         // Clear the screen
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -482,12 +489,10 @@ int main( void )
 
                     mat3 rot=mat3(vec3(cos(snakeBody[maxRank-1].transform->newangle), sin(snakeBody[maxRank-1].transform->newangle), 0.0), vec3(-sin(snakeBody[maxRank-1].transform->newangle), cos(snakeBody[maxRank-1].transform->newangle), 0.0), vec3(0.0, 0.0, snakeBody[maxRank-1].transform->newangle));
                     snakeTransforms[maxRank]=trans2;
-                    snakeRP[maxRank]=snakeRP[maxRank-1]+((mat3(vec3(cos(snakeBody[maxRank-1].transform->newangle+snakeBody[maxRank-1].transform->angle), sin(snakeBody[maxRank-1].transform->newangle+snakeBody[maxRank-1].transform->angle), 0.0), vec3(-sin(snakeBody[maxRank-1].transform->newangle+snakeBody[maxRank-1].transform->angle), cos(snakeBody[maxRank-1].transform->newangle+snakeBody[maxRank-1].transform->angle), 0.0), vec3(0.0, 0.0, snakeBody[maxRank-1].transform->newangle+snakeBody[maxRank-1].transform->angle)))*vec3(-0.8,0.f,0.f));
                     mouvements.push_back(mouvements[maxRank-1]);
-                    ObjectSnake snake3 = ObjectSnake(indices_tail, indexed_vertices_tail, uv_surface, triangles, &snakeTransforms[maxRank], &null, &snakeRP[maxRank], "2k_sun.bmp",maxRank);
+                    ObjectSnake snake3 = ObjectSnake(indices_tail, indexed_vertices_tail, uv_surface, triangles, &snakeTransforms[maxRank], &null, &snakeRP[maxRank], "text_test2.bmp",maxRank);
                     snake3.calculUVSphere();
                     snake3.transform->newangle=snakeBody[maxRank-1].transform->newangle;
-                    snake3.transform->m[0]=vec3(0.f,0.f,snakeSpeed);
                     snake3.transform->t=rot*vec3(snakeSpeed,0.f,0.f);
                     snake3.transform->newt=snakeBody[maxRank-1].transform->newt;
                     snake3.transform->m[0]=snakeBody[maxRank-1].transform->m[0];
@@ -499,8 +504,8 @@ int main( void )
                     snakeBody[maxRank-1].indexed_vertices=indexed_vertices_body;
                     snakeBody[maxRank-1].calculUVSphere();
 
-                    float randomX = 1.f + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX/(size-2)));
-                    float randomY = 1.f + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX/(size-2)));
+                    float randomX = 1.f + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX/(size-3)));
+                    float randomY = 1.f + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX/(size-3)));
                     GDS[1]->transform->newt=vec3(randomX,randomY,0.f);    
                 }
 
@@ -514,6 +519,12 @@ int main( void )
                         snakeBody[0].indexed_vertices=indexed_vertices_headDead;
                         std::cout<<"PERDU"<<std::endl;
                     }
+                }
+            }
+
+            if(i>6){
+                if(colliders[2].isColliding(colliders[i])){
+                    //snakeBody[i-6].transform
                 }
             }
 
