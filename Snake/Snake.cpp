@@ -54,6 +54,8 @@ float snakeSpeed=0.1;
 
 int maxRank=1;
 
+bool gameOver = false;
+
 std::vector<float> mouvements;
 Transform snakeTransforms[256];
 vec3 snakeRP[256];
@@ -350,7 +352,7 @@ int main( void )
 
 
     Transform transFruit=Transform(mSurface,t,0.f,0.f);
-    Object fruit = Object(indices_fruit,indexed_vertices_fruit,uv_surface,triangles, &transFruit, &null, &rp1, "hmap_defaut.bmp");
+    Object fruit = Object(indices_fruit,indexed_vertices_fruit,uv_surface,triangles, &transFruit, &null, &rp1, "cherries-text.bmp");
     fruit.calculUVSphere();
     fruit.transform->newt=vec3(size - (size/4.f), size/2.f, 0.f);
     GDS.push_back(&fruit);
@@ -517,6 +519,7 @@ int main( void )
                         }
                         snakeBody[0].indices=indices_headDead;
                         snakeBody[0].indexed_vertices=indexed_vertices_headDead;
+                        gameOver = true;
                         std::cout<<"PERDU"<<std::endl;
                     }
                 }
@@ -614,7 +617,7 @@ void processInput(GLFWwindow *window)
         }
 	}
     
-    if(glfwGetKey(window, GLFW_KEY_O) == GLFW_PRESS){
+    if(glfwGetKey(window, GLFW_KEY_O) == GLFW_PRESS && !gameOver){
     	debug = false;
         for(int i=0;i<=maxRank;i++){
             snakeBody[i].transform->t=vec3(snakeSpeed,0.f,0.f);
@@ -664,7 +667,7 @@ void processInput(GLFWwindow *window)
 	    if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
 	        camera_position += camera_up * cameraSpeed; 
     }
-    else{
+    else if(!gameOver){
 
         mat3 rot;
         float rad=snakeSpeed;
