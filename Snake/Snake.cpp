@@ -15,6 +15,7 @@
 #include "tools/Shader.h"
 #include <typeinfo>
 
+
 GLFWwindow* window;
 
 using namespace glm;
@@ -70,6 +71,8 @@ struct Light {
 }; 
 
 Light light;
+
+
 
 void setLight(){
     light.position;
@@ -432,6 +435,8 @@ int main( void )
     int nbFrames = 0;
 
     setLight();
+    int nbCeriseGraille = 0;
+
     do{
         if(!debug){
             nbFrames++;
@@ -479,7 +484,6 @@ int main( void )
 
             GDS[i]->update();
 
-            //std::cout<<colliders[0].isColliding(colliders[1])<<std::endl;
             if(i==6){
                 //ajout de partie du corps
                 if(colliders[1].isColliding(colliders[6])){
@@ -504,7 +508,10 @@ int main( void )
 
                     float randomX = 1.f + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX/(size-3)));
                     float randomY = 1.f + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX/(size-3)));
-                    GDS[1]->transform->newt=vec3(randomX,randomY,0.f);    
+                    GDS[1]->transform->newt=vec3(randomX,randomY,0.f);  
+                    nbCeriseGraille++;
+                    std::cout << "Ta graille " << nbCeriseGraille << " cerises mon reuf" << std::endl;
+
                 }
 
                 for(int j=2;j<6;j++){
@@ -516,7 +523,7 @@ int main( void )
                         snakeBody[0].indices=indices_headDead;
                         snakeBody[0].indexed_vertices=indexed_vertices_headDead;
                         gameOver = true;
-                        std::cout<<"PERDU"<<std::endl;
+                        //std::cout<<"PERDU"<<std::endl;
                     }
                 }
             }
@@ -577,6 +584,7 @@ int main( void )
              	camera_position = snake.transform->newt + vec3(0.,0., 20. + maxRank);
             
             light.position = vec3(size,size,0.1);
+
         }
         // Swap buffers
         glfwSwapBuffers(window);
