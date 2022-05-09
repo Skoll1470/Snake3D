@@ -56,6 +56,9 @@ int maxRank=1;
 
 bool gameOver = false;
 
+bool menuPlay=true;
+bool quit=false;
+
 std::vector<float> mouvements;
 Transform snakeTransforms[256];
 vec3 snakeRP[256];
@@ -239,6 +242,66 @@ void createMurH(std::vector<unsigned short>& indices_mur, std::vector<vec3>& ind
     indexed_vertices_mur.push_back(vec3(size-1,0.f,2.f));
 }
 
+void createMenu(std::vector<unsigned short> &indices, std::vector<vec3>& indexed_vertices, std::vector<float> &uv){
+    indices.clear();
+    indexed_vertices.clear();
+    uv.clear();
+
+    indices.push_back(0);
+    indices.push_back(1);
+    indices.push_back(2);
+    indices.push_back(2);
+    indices.push_back(3);
+    indices.push_back(0);
+
+    indexed_vertices.push_back(vec3(-2.f,-1.5,0.f));
+    indexed_vertices.push_back(vec3(2.f,-1.5,0.f));
+    indexed_vertices.push_back(vec3(2.f,1.5,0.f));
+    indexed_vertices.push_back(vec3(-2.f,1.5,0.f));
+
+    uv.push_back(0.f);
+    uv.push_back(0.f);
+
+    uv.push_back(1.f);
+    uv.push_back(0.f);
+
+    uv.push_back(1.f);
+    uv.push_back(1.f);
+
+    uv.push_back(0.f);
+    uv.push_back(1.f);
+}
+
+void createScoreElement(std::vector<unsigned short> &indices, std::vector<vec3>& indexed_vertices, std::vector<float> &uv){
+    indices.clear();
+    indexed_vertices.clear();
+    uv.clear();
+
+    indices.push_back(0);
+    indices.push_back(1);
+    indices.push_back(2);
+    indices.push_back(2);
+    indices.push_back(3);
+    indices.push_back(0);
+
+    indexed_vertices.push_back(vec3((2.0*3.0)/4.0,(1.5*3.0)/4.0,0.f));
+    indexed_vertices.push_back(vec3(2.0,(1.5*3.0)/4.0,0.f));
+    indexed_vertices.push_back(vec3(2.f,1.5,0.f));
+    indexed_vertices.push_back(vec3((2.0*3.0)/4,1.5,0.f));
+
+    uv.push_back(0.f);
+    uv.push_back(0.f);
+
+    uv.push_back(1.f);
+    uv.push_back(0.f);
+
+    uv.push_back(1.f);
+    uv.push_back(1.f);
+
+    uv.push_back(0.f);
+    uv.push_back(1.f);    
+}
+
 int main( void )
 {
     GDS.clear();
@@ -352,7 +415,7 @@ int main( void )
 
 
     Transform transFruit=Transform(mSurface,t,0.f,0.f);
-    Object fruit = Object(indices_fruit,indexed_vertices_fruit,uv_surface,triangles, &transFruit, &null, &rp1, "chiffres/5.bmp");
+    Object fruit = Object(indices_fruit,indexed_vertices_fruit,uv_surface,triangles, &transFruit, &null, &rp1, "cherries-textBis.bmp");
     fruit.calculUVSphere();
     fruit.transform->newt=vec3(size - (size/4.f), size/2.f, 0.f);
     GDS.push_back(&fruit);
@@ -387,6 +450,47 @@ int main( void )
     murH.calculUVSphere();
     murH.transform->newt=vec3(0.f,size-1,0.f);
     GDS.push_back(&murH);
+
+    std::vector<unsigned short> indices_menu;
+    std::vector<vec3> indexed_vertices_menu;
+    std::vector<float> uv_menu;
+    createMenu(indices_menu,indexed_vertices_menu,uv_menu);
+    Transform transMenu = Transform(mSurface,t,0.f,0.f);
+    Object menu = Object(indices_menu,indexed_vertices_menu,uv_menu,triangles,&transMenu,&null,&rp1,"play-menu.bmp");
+    GDS.push_back(&menu);
+
+    std::vector<unsigned short> indices_score_cerise;
+    std::vector<vec3> indexed_vertices_score_cerise;
+    std::vector<float> uv_score_cerise;
+    createScoreElement(indices_score_cerise,indexed_vertices_score_cerise,uv_score_cerise);
+    Transform transScoreCerise = Transform(mSurface,t,0.f,0.f);
+    Object scoreCerise = Object(indices_score_cerise,indexed_vertices_score_cerise,uv_score_cerise,triangles,&transScoreCerise,&null,&rp1,"cerise.bmp");
+    GDS.push_back(&scoreCerise);
+
+    std::vector<unsigned short> indices_score_unit;
+    std::vector<vec3> indexed_vertices_score_unit;
+    std::vector<float> uv_score_unit;
+    createScoreElement(indices_score_unit,indexed_vertices_score_unit,uv_score_unit);
+    Transform transScoreUnit = Transform(mSurface,t,0.f,0.f);
+    Object scoreUnit = Object(indices_score_unit,indexed_vertices_score_unit,uv_score_unit,triangles,&transScoreUnit,&null,&rp1,"cerise.bmp");
+    GDS.push_back(&scoreUnit);
+
+    std::vector<unsigned short> indices_score_diz;
+    std::vector<vec3> indexed_vertices_score_diz;
+    std::vector<float> uv_score_diz;
+    createScoreElement(indices_score_diz,indexed_vertices_score_diz,uv_score_diz);
+    Transform transScoreDiz = Transform(mSurface,t,0.f,0.f);
+    Object scoreDiz = Object(indices_score_diz,indexed_vertices_score_diz,uv_score_diz,triangles,&transScoreDiz,&null,&rp1,"cerise.bmp");
+    GDS.push_back(&scoreDiz);
+
+    std::vector<unsigned short> indices_score_cent;
+    std::vector<vec3> indexed_vertices_score_cent;
+    std::vector<float> uv_score_cent;
+    createScoreElement(indices_score_cent,indexed_vertices_score_cent,uv_score_cent);
+    Transform transScoreCent = Transform(mSurface,t,0.f,0.f);
+    Object scoreCent = Object(indices_score_cent,indexed_vertices_score_cent,uv_score_cent,triangles,&transScoreCent,&null,&rp1,"cerise.bmp");
+    GDS.push_back(&scoreCent);
+
 
     mat3 m2 = glm::mat3(vec3(0.0f,-1.0f,0.0f),vec3(0.5f,0.5f,0.5f),vec3(.0f,0.0f,1.0f));
     Transform trans2 = Transform(m2, vec3(0.f,0.f,0.f), 0.f, 0.f);
@@ -435,6 +539,16 @@ int main( void )
     do{
         if(!debug){
             nbFrames++;
+            menu.transform->newt=vec3(-30,-30,-30);
+            scoreCerise.transform->newt = camera_position - vec3(0.f,0.2,2.7*4.f/3.f);
+            scoreUnit.transform->newt = camera_position - vec3(0.5,0.2,2.7*4.f/3.f);
+            scoreDiz.transform->newt = camera_position - vec3(1.0,0.2,2.7*4.f/3.f); 
+            scoreCent.transform->newt = camera_position - vec3(1.5,0.2,2.7*4.f/3.f);
+            light.position = vec3(size,size,0.1);
+        }
+        else{
+            menu.transform->newt = camera_position - vec3(0.f,0.f,2.7*4.f/3.f);
+            light.position = camera_position + vec3(0.f,0.f,7.5);    
         }
         // Measure speed
         // per-frame time logic
@@ -457,7 +571,7 @@ int main( void )
 
         updateSnake();
 
-        if(debug){
+        if(debug or gameOver){
             for(int i=0;i<=maxRank;i++){
                 snakeBody[i].transform->t=vec3(0.f);
             }
@@ -480,9 +594,9 @@ int main( void )
             GDS[i]->update();
 
             //std::cout<<colliders[0].isColliding(colliders[1])<<std::endl;
-            if(i==6){
+            if(i==11){
                 //ajout de partie du corps
-                if(colliders[1].isColliding(colliders[6])){
+                if(colliders[1].isColliding(colliders[11])){
                     maxRank++;
 
                     mat3 rot=mat3(vec3(cos(snakeBody[maxRank-1].transform->newangle), sin(snakeBody[maxRank-1].transform->newangle), 0.0), vec3(-sin(snakeBody[maxRank-1].transform->newangle), cos(snakeBody[maxRank-1].transform->newangle), 0.0), vec3(0.0, 0.0, snakeBody[maxRank-1].transform->newangle));
@@ -504,20 +618,27 @@ int main( void )
 
                     float randomX = 1.f + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX/(size-3)));
                     float randomY = 1.f + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX/(size-3)));
-                    GDS[1]->transform->newt=vec3(randomX,randomY,0.f);  
-                    std::cout << maxRank - 2 << std::endl;  
+                    GDS[1]->transform->newt=vec3(randomX,randomY,0.f);
+
+                    std::string path = "chiffres/"+std::to_string((maxRank-2)%10)+".bmp";
+                    scoreUnit.loadTexture(path.c_str());
+                    path = "chiffres/"+std::to_string(((maxRank-2)%100)/10)+".bmp";
+                    scoreDiz.loadTexture(path.c_str());
+                    path = "chiffres/"+std::to_string((maxRank-2)/100)+".bmp";
+                    scoreCent.loadTexture(path.c_str());
+                    snakeSpeed+=0.002;    
                 }
 
                 for(int j=2;j<6;j++){
-                    if(colliders[j].isColliding(colliders[6])){
-                        debug=true;
+                    if(colliders[j].isColliding(colliders[11])){
+                        //debug=true;
                         for(int i=0;i<=maxRank;i++){
                             snakeBody[i].transform->t=vec3(0.f,0.f,0.f);
                         }
                         snakeBody[0].indices=indices_headDead;
                         snakeBody[0].indexed_vertices=indexed_vertices_headDead;
                         gameOver = true;
-                        //std::cout<<"PERDU"<<std::endl;
+                        camera_position = snake.transform->newt + vec3(0.f,0.f,10.f);
                     }
                 }
             }
@@ -566,7 +687,7 @@ int main( void )
             shader.setVec3("lightColor", light.color);
             shader.setVec3("barycentre", GDS[i]->barycentre + GDS[i]->transform->newt);
 
-            if(i > 5){
+            if(i > 6){
                 shader.setBool("isSphere", true);
             }
             else shader.setBool("isSphere", false);
@@ -574,17 +695,16 @@ int main( void )
 
             GDS[i]->draw();
 
-            if(!debug)
+            if(!debug and !gameOver)
              	camera_position = snake.transform->newt + vec3(0.,0., 20. + maxRank);
             
-            light.position = vec3(size,size,0.1);
         }
         // Swap buffers
         glfwSwapBuffers(window);
         glfwPollEvents();   
     } // Check if the ESC key was pressed or the window was closed
-    while( glfwGetKey(window, GLFW_KEY_ESCAPE ) != GLFW_PRESS &&
-           glfwWindowShouldClose(window) == 0 );
+    while( !quit &&
+           glfwWindowShouldClose(window) == 0);
 
     // Cleanup VBO and shader
     glDeleteVertexArrays(1, &VertexArrayID);
@@ -653,11 +773,28 @@ void processInput(GLFWwindow *window)
 	    if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
 	        camera_position += glm::normalize(glm::cross(camera_target, camera_up)) * cameraSpeed;
 
-	    if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
-	        camera_position -= camera_up * cameraSpeed;
+	    if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS){
+	        GDS[6]->loadTexture("play-menu.bmp");
+            menuPlay=true;
+        }
 
-	    if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
-	        camera_position += camera_up * cameraSpeed; 
+	    if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS){
+	        GDS[6]->loadTexture("quit-menu.bmp");
+            menuPlay=false;
+            //camera_position += camera_up * cameraSpeed;
+        }
+
+        if(glfwGetKey(window, GLFW_KEY_ENTER) == GLFW_PRESS){
+            if(menuPlay){
+                debug = false;
+                for(int i=0;i<=maxRank;i++){
+                    snakeBody[i].transform->t=vec3(snakeSpeed,0.f,0.f);
+                }
+            }
+            else{
+                quit=true;
+            } 
+        }
     }
     else if(!gameOver){
 

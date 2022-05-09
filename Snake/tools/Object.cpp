@@ -48,7 +48,7 @@ public:
 	std::vector<Transform> parentTransforms;
 	vec3 barycentre;
 
-	char* texture_name;
+	const char* texture_name;
 
 	GLuint programmID;
 	GLuint texture;
@@ -212,6 +212,13 @@ public:
 			this->barycentre += indexed_vertices[i];
 		
 		this->barycentre /= (float) indexed_vertices.size();
+	}
+
+	void loadTexture(const char* filename){
+		texture_name=filename;
+		programmID = LoadShaders("vertex_shader.glsl", "fragment_shader.glsl");
+    	texture = loadBMP_custom(texture_name);
+    	textureID = glGetUniformLocation(programmID,"textureSampler");
 	}
 
 };
