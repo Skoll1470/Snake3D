@@ -556,7 +556,9 @@ CMakeFiles/Snake.dir/Snake/Snake.cpp.o: ../Snake/Snake.cpp \
   /Library/Developer/CommandLineTools/SDKs/MacOSX12.3.sdk/usr/include/c++/v1/stack \
   /Library/Developer/CommandLineTools/SDKs/MacOSX12.3.sdk/usr/include/c++/v1/deque \
   /Library/Developer/CommandLineTools/SDKs/MacOSX12.3.sdk/usr/include/c++/v1/iomanip \
-  /Library/Developer/CommandLineTools/SDKs/MacOSX12.3.sdk/usr/include/c++/v1/sstream
+  /Library/Developer/CommandLineTools/SDKs/MacOSX12.3.sdk/usr/include/c++/v1/sstream \
+  ../Snake/tools/MapObject.cpp \
+  ../Snake/tools/UI.cpp
 
 CMakeFiles/Snake.dir/common/controls.cpp.o: ../common/controls.cpp \
   ../external/glfw-3.1.2/include/GLFW/glfw3.h \
@@ -2272,8 +2274,6 @@ CMakeFiles/Snake.dir/common/vboindexer.cpp.o: ../common/vboindexer.cpp \
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX12.3.sdk/usr/include/c++/v1/optional:
 
-/Library/Developer/CommandLineTools/SDKs/MacOSX12.3.sdk/usr/include/c++/v1/__functional/is_transparent.h:
-
 ../common/vboindexer.cpp:
 
 ../common/texture.cpp:
@@ -2281,6 +2281,12 @@ CMakeFiles/Snake.dir/common/vboindexer.cpp.o: ../common/vboindexer.cpp \
 ../common/objloader.cpp:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX12.3.sdk/System/Library/Frameworks/OpenGL.framework/Headers/gltypes.h:
+
+/Library/Developer/CommandLineTools/SDKs/MacOSX12.3.sdk/usr/include/c++/v1/__functional/is_transparent.h:
+
+../Snake/tools/UI.cpp:
+
+../Snake/tools/MapObject.cpp:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX12.3.sdk/usr/include/c++/v1/sstream:
 

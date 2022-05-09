@@ -35,9 +35,7 @@ vec3 vide=vec3(0.0,0.0,0.0);
 Transform transVide=Transform();
 
 class Object{
-
-private:
-
+	
 public:
 
 	std::vector<std::vector<unsigned short> > triangles;
@@ -92,7 +90,7 @@ public:
 		programmID = LoadShaders("vertex_shader.glsl", "fragment_shader.glsl");
     	texture = loadBMP_custom(texture_name);
     	textureID = glGetUniformLocation(programmID,"textureSampler");
-    	heightmap = loadBMP_custom("hmap_mountain.bmp");
+    	heightmap = loadBMP_custom("textures/hmap_defaut.bmp");
     	heightmapID = glGetUniformLocation(programmID,"heightmap");
     	useHeightmap=0;
 	}

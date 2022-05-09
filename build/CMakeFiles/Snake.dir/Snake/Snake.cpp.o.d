@@ -554,4 +554,6 @@ CMakeFiles/Snake.dir/Snake/Snake.cpp.o: \
   /Library/Developer/CommandLineTools/SDKs/MacOSX12.3.sdk/usr/include/c++/v1/stack \
   /Library/Developer/CommandLineTools/SDKs/MacOSX12.3.sdk/usr/include/c++/v1/deque \
   /Library/Developer/CommandLineTools/SDKs/MacOSX12.3.sdk/usr/include/c++/v1/iomanip \
-  /Library/Developer/CommandLineTools/SDKs/MacOSX12.3.sdk/usr/include/c++/v1/sstream
+  /Library/Developer/CommandLineTools/SDKs/MacOSX12.3.sdk/usr/include/c++/v1/sstream \
+  /Users/max/Documents/master1/MOTEUR/Snake3D/Snake/tools/MapObject.cpp \
+  /Users/max/Documents/master1/MOTEUR/Snake3D/Snake/tools/UI.cpp

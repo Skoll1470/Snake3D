@@ -14,6 +14,8 @@
 #include "tools/Object.cpp"
 #include "tools/Shader.h"
 #include <typeinfo>
+#include "tools/MapObject.cpp"
+#include "tools/UI.cpp"
 
 GLFWwindow* window;
 
@@ -27,8 +29,8 @@ const unsigned int SCR_HEIGHT = 600;
 
 // camera
 glm::vec3 camera_position   = glm::vec3(0.0f, 0.0f,  3.0f);
-glm::vec3 camera_target = glm::vec3(0.0f, 0.0f, -1.0f);
-glm::vec3 camera_up    = glm::vec3(0.0f, 1.0f,  0.0f);
+glm::vec3 camera_target     = glm::vec3(0.0f, 0.0f, -1.0f);
+glm::vec3 camera_up         = glm::vec3(0.0f, 1.0f,  0.0f);
 
 // timing
 float deltaTime = 0.0f;	// time between current frame and last frame
@@ -50,14 +52,13 @@ Collider colliders[512];
 
 bool debug = true;
 
-float snakeSpeed=0.1;
+float snakeSpeed = 0.1;
 
-int maxRank=1;
+int maxRank = 1;
 
 bool gameOver = false;
-
-bool menuPlay=true;
-bool quit=false;
+bool menuPlay = true;
+bool quit = false;
 
 std::vector<float> mouvements;
 Transform snakeTransforms[256];
@@ -70,14 +71,13 @@ Object null = Object();
 struct Light {
     vec3 position;
     vec3 color;
+
+    void setLight(){
+        color = vec3 (300, 300, 300);
+    }
 }; 
 
 Light light;
-
-void setLight(){
-    light.position;
-    light.color = vec3 (300, 300, 300);
-}
 
 //mise à jour du mouvement et des rotations des parties du corps
 void updateSnake(){
@@ -92,214 +92,6 @@ void updateSnake(){
         snakeBody[i].transform->t = rot2*vec3(snakeSpeed,0.f,0.f);
         *snakeBody[i].relativParent = rot2*vec3(-0.9*i,0.f,0.f);
     }
-}
-
-// Fonction qui permet de créer la surface.
-void createSurface(std::vector<unsigned short>& indices,std::vector<glm::vec3>& indexed_vertices, std::vector<float>& uv, float step){
-    
-    indices.clear();
-    uv.clear();
-    indexed_vertices.clear();
-
-    int nbSommets = resolution;
-
-    srand(time(NULL));
-
-    for (int i = 0; i < nbSommets-1; ++i){
-        for (int j = 0; j < nbSommets-1; ++j)
-        {
-            indices.push_back(i * nbSommets + j);
-            indices.push_back(i * nbSommets+ j + 1);
-            indices.push_back((i+1) * nbSommets + j);
-
-            indices.push_back(i* nbSommets + j + 1);
-            indices.push_back((i+1) * nbSommets + j + 1);
-            indices.push_back((i+1) * nbSommets + j);
-        }
-    }
-
-    for(int i = 0; i < nbSommets; i++){
-        for(int j = 0; j < nbSommets; j++){
-            indexed_vertices.push_back(glm::vec3((float)j*step,(float)i*step,0 ));
-
-            uv.push_back((float)j/(nbSommets-1));
-            uv.push_back((float)i/(nbSommets-1));
-        }
-    }
-}
-
-void createMurV(std::vector<unsigned short>& indices_mur, std::vector<vec3>& indexed_vertices_mur){
-    indices_mur.clear();
-    indexed_vertices_mur.clear();
-
-    indices_mur.push_back(0);
-    indices_mur.push_back(1);
-    indices_mur.push_back(2);
-    indices_mur.push_back(2);
-    indices_mur.push_back(3);
-    indices_mur.push_back(0);
-
-    indices_mur.push_back(3);
-    indices_mur.push_back(2);
-    indices_mur.push_back(6);
-    indices_mur.push_back(6);
-    indices_mur.push_back(7);
-    indices_mur.push_back(3);
-
-    indices_mur.push_back(0);
-    indices_mur.push_back(1);
-    indices_mur.push_back(5);
-    indices_mur.push_back(5);
-    indices_mur.push_back(4);
-    indices_mur.push_back(0);
-
-    indices_mur.push_back(2);
-    indices_mur.push_back(1);
-    indices_mur.push_back(5);
-    indices_mur.push_back(5);
-    indices_mur.push_back(6);
-    indices_mur.push_back(2);
-
-    indices_mur.push_back(0);
-    indices_mur.push_back(3);
-    indices_mur.push_back(7);
-    indices_mur.push_back(7);
-    indices_mur.push_back(4);
-    indices_mur.push_back(0);
-
-    indices_mur.push_back(4);
-    indices_mur.push_back(5);
-    indices_mur.push_back(6);
-    indices_mur.push_back(6);
-    indices_mur.push_back(7);
-    indices_mur.push_back(4);
-
-    indexed_vertices_mur.push_back(vec3(-1.f,-1.f,0.f));
-    indexed_vertices_mur.push_back(vec3(0.f,-1.f,0.f));
-    indexed_vertices_mur.push_back(vec3(0.f,-1.f,2.f));
-    indexed_vertices_mur.push_back(vec3(-1.f,-1.f,2.f));
-
-    indexed_vertices_mur.push_back(vec3(-1.f,size-1,0.f));
-    indexed_vertices_mur.push_back(vec3(0.f,size-1,0.f));
-    indexed_vertices_mur.push_back(vec3(0.f,size-1,2.f));
-    indexed_vertices_mur.push_back(vec3(-1.f,size-1,2.f));
-}
-
-void createMurH(std::vector<unsigned short>& indices_mur, std::vector<vec3>& indexed_vertices_mur){
-    indices_mur.clear();
-    indexed_vertices_mur.clear();
-
-    indices_mur.push_back(0);
-    indices_mur.push_back(1);
-    indices_mur.push_back(2);
-    indices_mur.push_back(2);
-    indices_mur.push_back(3);
-    indices_mur.push_back(0);
-
-    indices_mur.push_back(3);
-    indices_mur.push_back(2);
-    indices_mur.push_back(6);
-    indices_mur.push_back(6);
-    indices_mur.push_back(7);
-    indices_mur.push_back(3);
-
-    indices_mur.push_back(0);
-    indices_mur.push_back(1);
-    indices_mur.push_back(5);
-    indices_mur.push_back(5);
-    indices_mur.push_back(4);
-    indices_mur.push_back(0);
-
-    indices_mur.push_back(2);
-    indices_mur.push_back(1);
-    indices_mur.push_back(5);
-    indices_mur.push_back(5);
-    indices_mur.push_back(6);
-    indices_mur.push_back(2);
-
-    indices_mur.push_back(0);
-    indices_mur.push_back(3);
-    indices_mur.push_back(7);
-    indices_mur.push_back(7);
-    indices_mur.push_back(4);
-    indices_mur.push_back(0);
-
-    indices_mur.push_back(4);
-    indices_mur.push_back(5);
-    indices_mur.push_back(6);
-    indices_mur.push_back(6);
-    indices_mur.push_back(7);
-    indices_mur.push_back(4);
-
-    indexed_vertices_mur.push_back(vec3(-1.f,0.f,0.f));
-    indexed_vertices_mur.push_back(vec3(-1.f,-1.f,0.f));
-    indexed_vertices_mur.push_back(vec3(-1.f,-1.f,2.f));
-    indexed_vertices_mur.push_back(vec3(-1.f,0.f,2.f));
-
-    indexed_vertices_mur.push_back(vec3(size-1,0.f,0.f));
-    indexed_vertices_mur.push_back(vec3(size-1,-1.f,0.f));
-    indexed_vertices_mur.push_back(vec3(size-1,-1.f,2.f));
-    indexed_vertices_mur.push_back(vec3(size-1,0.f,2.f));
-}
-
-void createMenu(std::vector<unsigned short> &indices, std::vector<vec3>& indexed_vertices, std::vector<float> &uv){
-    indices.clear();
-    indexed_vertices.clear();
-    uv.clear();
-
-    indices.push_back(0);
-    indices.push_back(1);
-    indices.push_back(2);
-    indices.push_back(2);
-    indices.push_back(3);
-    indices.push_back(0);
-
-    indexed_vertices.push_back(vec3(-2.f,-1.5,0.f));
-    indexed_vertices.push_back(vec3(2.f,-1.5,0.f));
-    indexed_vertices.push_back(vec3(2.f,1.5,0.f));
-    indexed_vertices.push_back(vec3(-2.f,1.5,0.f));
-
-    uv.push_back(0.f);
-    uv.push_back(0.f);
-
-    uv.push_back(1.f);
-    uv.push_back(0.f);
-
-    uv.push_back(1.f);
-    uv.push_back(1.f);
-
-    uv.push_back(0.f);
-    uv.push_back(1.f);
-}
-
-void createScoreElement(std::vector<unsigned short> &indices, std::vector<vec3>& indexed_vertices, std::vector<float> &uv){
-    indices.clear();
-    indexed_vertices.clear();
-    uv.clear();
-
-    indices.push_back(0);
-    indices.push_back(1);
-    indices.push_back(2);
-    indices.push_back(2);
-    indices.push_back(3);
-    indices.push_back(0);
-
-    indexed_vertices.push_back(vec3((2.0*3.0)/4.0,(1.5*3.0)/4.0,0.f));
-    indexed_vertices.push_back(vec3(2.0,(1.5*3.0)/4.0,0.f));
-    indexed_vertices.push_back(vec3(2.f,1.5,0.f));
-    indexed_vertices.push_back(vec3((2.0*3.0)/4,1.5,0.f));
-
-    uv.push_back(0.f);
-    uv.push_back(0.f);
-
-    uv.push_back(1.f);
-    uv.push_back(0.f);
-
-    uv.push_back(1.f);
-    uv.push_back(1.f);
-
-    uv.push_back(0.f);
-    uv.push_back(1.f);    
 }
 
 int main( void )
@@ -397,10 +189,8 @@ int main( void )
     std::vector<glm::vec3> indexed_vertices_headDead;
     loadOFF("modele_snake/headDead.off", indexed_vertices_headDead, indices_headDead, triangles);    
 
-    std::vector<unsigned short> indices_surface;
-    std::vector<glm::vec3> indexed_vertices_surface;
-    std::vector<float> uv_surface;
-    createSurface(indices_surface,indexed_vertices_surface,uv_surface,size/(float)resolution);
+    MapObject mpsurface = MapObject();
+    mpsurface.createSurface(size/(float) resolution, resolution);
 
     mat3 m = glm::mat3(vec3(0.0f,0.0f,0.0f),vec3(1.0f,1.0f,1.0f),vec3(0.0f,0.0f,0.0f));
     vec3 t = glm::vec3(0.0,0.0f,0.0f);
@@ -410,85 +200,67 @@ int main( void )
     Transform transSurface = Transform(mSurface,t,0.f,0.f);
     
     vec3 rp1 = vec3(0.0f,0.0f,0.0f);
-    Object surface = Object(indices_surface, indexed_vertices_surface, uv_surface, triangles, &transSurface, &null, &rp1, "tex_grass.bmp", "hmap_defaut.bmp");
+    Object surface = Object(mpsurface.indices, mpsurface.indexed_vertices, mpsurface.uv, triangles, &transSurface, &null, &rp1, "textures/tex_grass.bmp", "textures/hmap_defaut.bmp");
     GDS.push_back(&surface);
 
 
     Transform transFruit=Transform(mSurface,t,0.f,0.f);
-    Object fruit = Object(indices_fruit,indexed_vertices_fruit,uv_surface,triangles, &transFruit, &null, &rp1, "cherries-textBis.bmp");
+    Object fruit = Object(indices_fruit,indexed_vertices_fruit,mpsurface.uv,triangles, &transFruit, &null, &rp1, "textures/cherries-textBis.bmp");
     fruit.calculUVSphere();
     fruit.transform->newt=vec3(size - (size/4.f), size/2.f, 0.f);
     GDS.push_back(&fruit);
-    
 
-    std::vector<unsigned short> indices_murV;
-    std::vector<vec3> indexed_vertices_murV;
+    MapObject mpmurV = MapObject();
+    mpmurV.createMurV(size);
 
-    createMurV(indices_murV,indexed_vertices_murV);
-
-    Object murG = Object(indices_murV,indexed_vertices_murV,uv_surface,triangles,&transSurface,&null,&rp1,"tex_rock.bmp");
+    Object murG = Object(mpmurV.indices,mpmurV.indexed_vertices,mpsurface.uv,triangles,&transSurface,&null,&rp1,"textures/tex_rock.bmp");
     murG.calculUVSphere();
     GDS.push_back(&murG);
 
+
     Transform transMurD=Transform(mSurface,t,0.f,0.f);
-    Object murD = Object(indices_murV,indexed_vertices_murV,uv_surface,triangles,&transMurD,&null,&rp1,"tex_rock.bmp");
+    Object murD = Object(mpmurV.indices,mpmurV.indexed_vertices,mpsurface.uv,triangles,&transMurD,&null,&rp1,"textures/tex_rock.bmp");
     murD.calculUVSphere();
     murD.transform->newt=vec3(size-1,0.f,0.f);
     GDS.push_back(&murD);
 
-    std::vector<unsigned short> indices_murH;
-    std::vector<vec3> indexed_vertices_murH;
+    MapObject mpmurH = MapObject();
+    mpmurH.createMurH(size);
 
-    createMurH(indices_murH,indexed_vertices_murH);
-
-    Object murB = Object(indices_murH,indexed_vertices_murH,uv_surface,triangles,&transSurface,&null,&rp1,"tex_rock.bmp");
+    Object murB = Object(mpmurH.indices,mpmurH.indexed_vertices,mpsurface.uv,triangles,&transSurface,&null,&rp1,"textures/tex_rock.bmp");
     murB.calculUVSphere();
     GDS.push_back(&murB);
 
     Transform transMurH=Transform(mSurface,t,0.f,0.f);
-    Object murH = Object(indices_murH,indexed_vertices_murH,uv_surface,triangles,&transMurH,&null,&rp1,"tex_rock.bmp");
+    Object murH = Object(mpmurH.indices,mpmurH.indexed_vertices,mpsurface.uv,triangles,&transMurH,&null,&rp1,"textures/tex_rock.bmp");
     murH.calculUVSphere();
     murH.transform->newt=vec3(0.f,size-1,0.f);
     GDS.push_back(&murH);
 
-    std::vector<unsigned short> indices_menu;
-    std::vector<vec3> indexed_vertices_menu;
-    std::vector<float> uv_menu;
-    createMenu(indices_menu,indexed_vertices_menu,uv_menu);
+    UI UImenu = UI();
+
+    UImenu.createMenu();
+
     Transform transMenu = Transform(mSurface,t,0.f,0.f);
-    Object menu = Object(indices_menu,indexed_vertices_menu,uv_menu,triangles,&transMenu,&null,&rp1,"play-menu.bmp");
+    Object menu = Object(UImenu.indices,UImenu.indexed_vertices,UImenu.uv,triangles,&transMenu,&null,&rp1,"textures/play-menu.bmp");
     GDS.push_back(&menu);
 
-    std::vector<unsigned short> indices_score_cerise;
-    std::vector<vec3> indexed_vertices_score_cerise;
-    std::vector<float> uv_score_cerise;
-    createScoreElement(indices_score_cerise,indexed_vertices_score_cerise,uv_score_cerise);
+    UI UIscore = UI();
+    UIscore.createScoreElement();
     Transform transScoreCerise = Transform(mSurface,t,0.f,0.f);
-    Object scoreCerise = Object(indices_score_cerise,indexed_vertices_score_cerise,uv_score_cerise,triangles,&transScoreCerise,&null,&rp1,"cerise.bmp");
+    Object scoreCerise = Object(UIscore.indices,UIscore.indexed_vertices,UIscore.uv,triangles,&transScoreCerise,&null,&rp1,"textures/cerise.bmp");
     GDS.push_back(&scoreCerise);
 
-    std::vector<unsigned short> indices_score_unit;
-    std::vector<vec3> indexed_vertices_score_unit;
-    std::vector<float> uv_score_unit;
-    createScoreElement(indices_score_unit,indexed_vertices_score_unit,uv_score_unit);
     Transform transScoreUnit = Transform(mSurface,t,0.f,0.f);
-    Object scoreUnit = Object(indices_score_unit,indexed_vertices_score_unit,uv_score_unit,triangles,&transScoreUnit,&null,&rp1,"cerise.bmp");
+    Object scoreUnit = Object(UIscore.indices,UIscore.indexed_vertices,UIscore.uv,triangles,&transScoreUnit,&null,&rp1,"textures/chiffres/0.bmp");
     GDS.push_back(&scoreUnit);
 
-    std::vector<unsigned short> indices_score_diz;
-    std::vector<vec3> indexed_vertices_score_diz;
-    std::vector<float> uv_score_diz;
-    createScoreElement(indices_score_diz,indexed_vertices_score_diz,uv_score_diz);
     Transform transScoreDiz = Transform(mSurface,t,0.f,0.f);
-    Object scoreDiz = Object(indices_score_diz,indexed_vertices_score_diz,uv_score_diz,triangles,&transScoreDiz,&null,&rp1,"cerise.bmp");
+    Object scoreDiz = Object(UIscore.indices,UIscore.indexed_vertices,UIscore.uv,triangles,&transScoreDiz,&null,&rp1,"textures/chiffres/0.bmp");
     GDS.push_back(&scoreDiz);
 
-    std::vector<unsigned short> indices_score_cent;
-    std::vector<vec3> indexed_vertices_score_cent;
-    std::vector<float> uv_score_cent;
-    createScoreElement(indices_score_cent,indexed_vertices_score_cent,uv_score_cent);
     Transform transScoreCent = Transform(mSurface,t,0.f,0.f);
-    Object scoreCent = Object(indices_score_cent,indexed_vertices_score_cent,uv_score_cent,triangles,&transScoreCent,&null,&rp1,"cerise.bmp");
+    Object scoreCent = Object(UIscore.indices,UIscore.indexed_vertices,UIscore.uv,triangles,&transScoreCent,&null,&rp1,"textures/chiffres/0.bmp");
     GDS.push_back(&scoreCent);
 
 
@@ -498,13 +270,13 @@ int main( void )
     snakeTransforms[1]=trans2;
 
     snakeRP[0]=rp1;
-    ObjectSnake snake = ObjectSnake(indices, indexed_vertices, uv_surface, triangles, &snakeTransforms[0], &null, &rp1, "text_test2.bmp",0);
+    ObjectSnake snake = ObjectSnake(indices, indexed_vertices, mpsurface.uv, triangles, &snakeTransforms[0], &null, &rp1, "textures/text_test2.bmp",0);
     snake.calculUVSphere();
 
     vec3 rp2 = vec3(-0.9f,0.0f,0.0f);
     snakeRP[1]=rp2;
 
-    ObjectSnake snake2 = ObjectSnake(indices_body, indexed_vertices_body, uv_surface, triangles, &snakeTransforms[1], &null, &snakeRP[1], "text_test2.bmp",1);
+    ObjectSnake snake2 = ObjectSnake(indices_body, indexed_vertices_body, mpsurface.uv, triangles, &snakeTransforms[1], &null, &snakeRP[1], "textures/text_test2.bmp",1);
     snake2.calculUVSphere();
     snakeBody[0]=snake;
     snakeBody[1]=snake2;
@@ -514,7 +286,7 @@ int main( void )
         maxRank++;
         snakeTransforms[maxRank]=trans2;
         snakeRP[maxRank]=vec3(-0.9*maxRank,0.f,0.f);
-        ObjectSnake snake3 = ObjectSnake(indices_tail, indexed_vertices_tail, uv_surface, triangles, &snakeTransforms[maxRank], &null, &snakeRP[maxRank], "text_test2.bmp",maxRank);
+        ObjectSnake snake3 = ObjectSnake(indices_tail, indexed_vertices_tail, mpsurface.uv, triangles, &snakeTransforms[maxRank], &null, &snakeRP[maxRank], "textures/text_test2.bmp",maxRank);
         snake3.calculUVSphere();
         snakeBody[maxRank]=snake3;
     }    
@@ -535,21 +307,34 @@ int main( void )
     double lastTime = glfwGetTime();
     int nbFrames = 0;
 
-    setLight();
+    // Initialisation de la lumière
+    light.setLight();
+
     do{
         if(!debug){
             nbFrames++;
+
+            // on enleve le menu
             menu.transform->newt=vec3(-30,-30,-30);
-            scoreCerise.transform->newt = camera_position - vec3(0.f,0.2,2.7*4.f/3.f);
-            scoreUnit.transform->newt = camera_position - vec3(0.5,0.2,2.7*4.f/3.f);
-            scoreDiz.transform->newt = camera_position - vec3(1.0,0.2,2.7*4.f/3.f); 
-            scoreCent.transform->newt = camera_position - vec3(1.5,0.2,2.7*4.f/3.f);
+
+            // on position le score
+            scoreCerise.transform->newt = camera_position - vec3(-7.f,-3.3,15*4.f/3.f);
+            scoreUnit.transform->newt = camera_position - vec3(-6.f,-3.3,15*4.f/3.f);
+            scoreDiz.transform->newt = camera_position - vec3(-5.f,-3.3,15*4.f/3.f);
+            scoreCent.transform->newt = camera_position - vec3(-4.f,-3.3,15*4.f/3.f);
+
+            // on place la lumière
             light.position = vec3(size,size,0.1);
         }
         else{
+
+            // Position du menu
             menu.transform->newt = camera_position - vec3(0.f,0.f,2.7*4.f/3.f);
+
+            //position de la lumière pour le menu
             light.position = camera_position + vec3(0.f,0.f,7.5);    
         }
+
         // Measure speed
         // per-frame time logic
         // --------------------
@@ -557,11 +342,8 @@ int main( void )
         deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
 
-        // input
-        // -----
 
         for(int i=0;i<maxRank;i++){
-            //GDS[i].transform->m[0]=vec3(0.f);
             snakeBody[i].transform->angle=0.f;
         }
 
@@ -583,7 +365,6 @@ int main( void )
         // Use our shader
         glUseProgram(shader.ID);
 
-        // Change de mesh selon la distance
         unsigned int grapheSize = GDS.size();
 
         // Dessin et update du graphe de scenes
@@ -593,7 +374,6 @@ int main( void )
 
             GDS[i]->update();
 
-            //std::cout<<colliders[0].isColliding(colliders[1])<<std::endl;
             if(i==11){
                 //ajout de partie du corps
                 if(colliders[1].isColliding(colliders[11])){
@@ -602,7 +382,7 @@ int main( void )
                     mat3 rot=mat3(vec3(cos(snakeBody[maxRank-1].transform->newangle), sin(snakeBody[maxRank-1].transform->newangle), 0.0), vec3(-sin(snakeBody[maxRank-1].transform->newangle), cos(snakeBody[maxRank-1].transform->newangle), 0.0), vec3(0.0, 0.0, snakeBody[maxRank-1].transform->newangle));
                     snakeTransforms[maxRank]=trans2;
                     mouvements.push_back(mouvements[maxRank-1]);
-                    ObjectSnake snake3 = ObjectSnake(indices_tail, indexed_vertices_tail, uv_surface, triangles, &snakeTransforms[maxRank], &null, &snakeRP[maxRank], "text_test2.bmp",maxRank);
+                    ObjectSnake snake3 = ObjectSnake(indices_tail, indexed_vertices_tail, mpsurface.uv, triangles, &snakeTransforms[maxRank], &null, &snakeRP[maxRank], "textures/text_test2.bmp",maxRank);
                     snake3.calculUVSphere();
                     snake3.transform->newangle=snakeBody[maxRank-1].transform->newangle;
                     snake3.transform->t=rot*vec3(snakeSpeed,0.f,0.f);
@@ -620,18 +400,17 @@ int main( void )
                     float randomY = 1.f + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX/(size-3)));
                     GDS[1]->transform->newt=vec3(randomX,randomY,0.f);
 
-                    std::string path = "chiffres/"+std::to_string((maxRank-2)%10)+".bmp";
+                    std::string path = "textures/chiffres/"+std::to_string((maxRank-2)%10)+".bmp";
                     scoreUnit.loadTexture(path.c_str());
-                    path = "chiffres/"+std::to_string(((maxRank-2)%100)/10)+".bmp";
+                    path = "textures/chiffres/"+std::to_string(((maxRank-2)%100)/10)+".bmp";
                     scoreDiz.loadTexture(path.c_str());
-                    path = "chiffres/"+std::to_string((maxRank-2)/100)+".bmp";
+                    path = "textures/chiffres/"+std::to_string((maxRank-2)/100)+".bmp";
                     scoreCent.loadTexture(path.c_str());
                     snakeSpeed+=0.002;    
                 }
 
                 for(int j=2;j<6;j++){
                     if(colliders[j].isColliding(colliders[11])){
-                        //debug=true;
                         for(int i=0;i<=maxRank;i++){
                             snakeBody[i].transform->t=vec3(0.f,0.f,0.f);
                         }
@@ -640,12 +419,6 @@ int main( void )
                         gameOver = true;
                         camera_position = snake.transform->newt + vec3(0.f,0.f,10.f);
                     }
-                }
-            }
-
-            if(i>6){
-                if(colliders[2].isColliding(colliders[i])){
-                    //snakeBody[i-6].transform
                 }
             }
 
@@ -665,10 +438,8 @@ int main( void )
             view = glm::rotate(view, angleZ, glm::vec3(0,0,1));
             shader.setMat4("view", view);
 
-
             mat4 projection = glm::perspective<float>(glm::radians(45.0f), 4.0f / 3.0f, 1.f, 100.f);
             shader.setMat4("projection", projection);
-
 
             mat4 mvp =  projection * view * model;
             GLuint mvpID = glGetUniformLocation(shader.ID, "mvp");
@@ -735,7 +506,6 @@ void processInput(GLFWwindow *window)
             snakeBody[i].transform->t=vec3(snakeSpeed,0.f,0.f);
         }
     }
-    		
 
     // Debug mode
     if(debug){
@@ -774,14 +544,13 @@ void processInput(GLFWwindow *window)
 	        camera_position += glm::normalize(glm::cross(camera_target, camera_up)) * cameraSpeed;
 
 	    if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS){
-	        GDS[6]->loadTexture("play-menu.bmp");
+	        GDS[6]->loadTexture("textures/play-menu.bmp");
             menuPlay=true;
         }
 
 	    if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS){
-	        GDS[6]->loadTexture("quit-menu.bmp");
+	        GDS[6]->loadTexture("texturesstextures/quit-menu.bmp");
             menuPlay=false;
-            //camera_position += camera_up * cameraSpeed;
         }
 
         if(glfwGetKey(window, GLFW_KEY_ENTER) == GLFW_PRESS){
@@ -796,17 +565,14 @@ void processInput(GLFWwindow *window)
             } 
         }
     }
-    else if(!gameOver){
-
+    else if(!gameOver){ // Si on a pas perdu
         mat3 rot;
         float rad=snakeSpeed;
 
     	// Déplacement du serpent
-	    
 	    if(glfwGetKey(window,GLFW_KEY_A) == GLFW_PRESS)
 	    {
 	        mouvements[0]=rad;
-            //sleep(1);
 	    }
 	    
 	    if(glfwGetKey(window,GLFW_KEY_D) == GLFW_PRESS)
