@@ -472,10 +472,6 @@ int main( void )
         // Change de mesh selon la distance
         unsigned int grapheSize = GDS.size();
 
-        /*for(int i=0;i<=maxRank;i++){
-            std::cout<<(*snakeBody[i].relativParent)[0]<<" "<<(*snakeBody[i].relativParent)[1]<<" "<<(*snakeBody[i].relativParent)[2]<<std::endl;
-        }*/
-
         // Dessin et update du graphe de scenes
         for(unsigned int i = 0; i < grapheSize; i++){
 
@@ -530,11 +526,6 @@ int main( void )
                     //snakeBody[i-6].transform
                 }
             }
-
-            // std::cout<<"Collider de "<<i<<std::endl;
-            // for(int j=0;j<4;j++){
-            //     std::cout<<colliders[i].points[j][0]<<" "<<colliders[i].points[j][1]<<" "<<colliders[i].points[j][2]<<std::endl;
-            // }
 
             // MVP
             mat4 model = GDS[i]->getModel();
