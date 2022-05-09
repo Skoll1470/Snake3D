@@ -569,13 +569,20 @@ int main( void )
 
             shader.setVec3("lightPosition", light.position);
             shader.setVec3("lightColor", light.color);
+            shader.setVec3("barycentre", GDS[i]->barycentre + GDS[i]->transform->newt);
+
+            if(i > 5){
+                shader.setBool("isSphere", true);
+            }
+            else shader.setBool("isSphere", false);
+        
 
             GDS[i]->draw();
 
             if(!debug)
-             	camera_position = snake.transform->newt + vec3(0.,0., 20. + maxRank) * vec3(0.,0.,1.);
+             	camera_position = snake.transform->newt + vec3(0.,0., 20. + maxRank);
             
-            light.position = vec3(0.5) * camera_position;
+            light.position = vec3(size,size,0.1);
         }
         // Swap buffers
         glfwSwapBuffers(window);
