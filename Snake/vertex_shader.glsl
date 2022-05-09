@@ -12,9 +12,11 @@ uniform mat4 projection;
 uniform mat4 view;
 uniform mat4 model;
 uniform mat4 mvp;
+uniform bool isSphere;
 
 uniform float x;
 uniform float y;
+uniform vec3 barycentre;
 
 out vec2 TexCoords;
 out vec3 WorldPos;
@@ -37,7 +39,13 @@ void main(){
 
         TexCoords = vertexUV;
         WorldPos = vec3(model * vec4(vertices_position_modelspace, 1.0));
-        Normal = mat3(model) * WorldPos;   
+
+        if(isSphere){
+                Normal = -(vertices_position_modelspace - barycentre) ;     
+        }
+        else{
+                Normal =  mat3(model) * WorldPos;
+        }
 
 }
 

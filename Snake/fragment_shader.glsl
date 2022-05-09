@@ -5,8 +5,8 @@ uniform sampler2D textureSampler;
 
 uniform float ao;
 vec3 albedo;
-float metallic = 0.5;
-float roughness = 0.5;
+float metallic = 0;
+float roughness = 0;
 
 uniform vec3 camPos;
 
@@ -122,8 +122,3 @@ void main()
 
         color = fragColor;
 }
-
-// void main(){
-//         color = texture(textureSampler,UV).rgb; 
-//         albedo = color;
-// }
