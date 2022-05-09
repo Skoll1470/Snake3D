@@ -352,7 +352,7 @@ int main( void )
 
 
     Transform transFruit=Transform(mSurface,t,0.f,0.f);
-    Object fruit = Object(indices_fruit,indexed_vertices_fruit,uv_surface,triangles, &transFruit, &null, &rp1, "cherries-text.bmp");
+    Object fruit = Object(indices_fruit,indexed_vertices_fruit,uv_surface,triangles, &transFruit, &null, &rp1, "cherries-textBis.bmp");
     fruit.calculUVSphere();
     fruit.transform->newt=vec3(size - (size/4.f), size/2.f, 0.f);
     GDS.push_back(&fruit);
@@ -504,7 +504,8 @@ int main( void )
 
                     float randomX = 1.f + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX/(size-3)));
                     float randomY = 1.f + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX/(size-3)));
-                    GDS[1]->transform->newt=vec3(randomX,randomY,0.f);    
+                    GDS[1]->transform->newt=vec3(randomX,randomY,0.f);  
+                    std::cout << maxRank - 2 << std::endl;  
                 }
 
                 for(int j=2;j<6;j++){
@@ -516,7 +517,7 @@ int main( void )
                         snakeBody[0].indices=indices_headDead;
                         snakeBody[0].indexed_vertices=indexed_vertices_headDead;
                         gameOver = true;
-                        std::cout<<"PERDU"<<std::endl;
+                        //std::cout<<"PERDU"<<std::endl;
                     }
                 }
             }
